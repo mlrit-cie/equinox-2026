@@ -1,0 +1,173 @@
+.scroll-expand {
+  position: relative;
+  height: var(--sx-height, 255svh);
+  view-timeline-name: --sx;
+  view-timeline-axis: block;
+}
+
+.scroll-expand-frame {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: grid;
+  place-items: center;
+  overflow: clip;
+}
+
+.scroll-expand-media {
+  position: relative;
+  width: var(--sx-w, 42%);
+  height: var(--sx-h, 58%);
+  border-radius: var(--sx-r, 24px);
+  overflow: hidden;
+  animation: sx-expand linear both;
+  animation-timeline: --sx;
+  /* The `contain` range is exactly the stretch where the frame is pinned; the
+     tail past --sx-range is the hold. */
+  animation-range: contain 0% contain var(--sx-range, 77%);
+}
+
+.scroll-expand-media img,
+.scroll-expand-placeholder {
+  animation: sx-zoom linear both;
+  animation-timeline: --sx;
+  animation-range: contain 0% contain var(--sx-range, 77%);
+}
+
+.scroll-expand-placeholder {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    120% 100% at 50% 0%,
+    var(--color-electric, #2b3bff) 0%,
+    var(--color-panel-2, #121740) 45%,
+    var(--color-ink, #04050a) 100%
+  );
+}
+
+.scroll-expand-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgb(0 0 0 / var(--sx-scrim, 0.45));
+  pointer-events: none;
+}
+
+.scroll-expand-copy {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: clamp(1.25rem, 4vw, 3rem);
+  text-align: left;
+}
+
+.scroll-expand-copy h2 {
+  font-size: clamp(1.75rem, 5vw, 4rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.scroll-expand-copy p {
+  max-width: 44ch;
+  color: rgb(255 255 255 / 0.75);
+}
+
+.scroll-expand-hint {
+  position: absolute;
+  bottom: 2rem;
+  font-size: 0.875rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.6);
+  animation: sx-fade linear both;
+  animation-timeline: --sx;
+  animation-range: contain 0% contain calc(var(--sx-range, 77%) / 2);
+}
+
+@keyframes sx-expand {
+  to {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--sx-r-end, 0px);
+  }
+}
+
+@keyframes sx-zoom {
+  from {
+    transform: scale(var(--sx-zoom, 1.35));
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes sx-fade {
+  to {
+    opacity: 0;
+  }
+}
+
+/* No scroll timelines (or motion turned down): show the end state, no scroll
+   runway to burn through. */
+@supports not (animation-timeline: view()) {
+  .scroll-expand {
+    height: 100svh;
+  }
+  .scroll-expand-media {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--sx-r-end, 0px);
+    animation: none;
+  }
+  .scroll-expand-media img,
+  .scroll-expand-placeholder {
+    animation: none;
+  }
+  .scroll-expand-hint {
+    display: none;
+  }
+}
+
+.scroll-expand.is-static {
+  height: 100svh;
+}
+
+.scroll-expand.is-static .scroll-expand-media {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--sx-r-end, 0px);
+  animation: none;
+}
+
+.scroll-expand.is-static .scroll-expand-media img,
+.scroll-expand.is-static .scroll-expand-placeholder,
+.scroll-expand.is-static .scroll-expand-hint {
+  animation: none;
+}
+
+.scroll-expand.is-static .scroll-expand-hint {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-expand {
+    height: 100svh;
+  }
+  .scroll-expand-media {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--sx-r-end, 0px);
+    animation: none;
+  }
+  .scroll-expand-media img,
+  .scroll-expand-placeholder,
+  .scroll-expand-hint {
+    animation: none;
+  }
+  .scroll-expand-hint {
+    display: none;
+  }
+}

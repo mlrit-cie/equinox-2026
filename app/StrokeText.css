@@ -1,0 +1,66 @@
+.stroke-text {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: inherit;
+}
+
+.stroke-space {
+  display: inline-block;
+  width: 0.3em;
+}
+
+/* Outline layer: the glyph drawn as a hairline, revealed left to right. */
+.stroke-piece {
+  display: inline-block;
+  position: relative;
+  color: transparent;
+  -webkit-text-stroke: var(--stroke-w, 1.4px) var(--stroke-color, #4b5cff);
+  clip-path: inset(0 100% 0 0);
+  animation: stroke-wipe var(--draw-dur, 1.6s) var(--stroke-ease, ease-out) both;
+  animation-delay: calc(var(--i, 0) * var(--stagger, 0.05s));
+}
+
+/* Fill layer: same glyph, solid, arriving behind the drawn outline. */
+.stroke-piece::after {
+  content: attr(data-char);
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--fill-color, #fff);
+  -webkit-text-stroke: 0;
+  clip-path: inset(0 100% 0 0);
+  animation: var(--fill-anim, stroke-wipe) calc(var(--draw-dur, 1.6s) * 0.8)
+    var(--stroke-ease, ease-out) both;
+  animation-delay: calc(
+    var(--i, 0) * var(--stagger, 0.05s) + var(--fill-delay, 0.2s)
+  );
+}
+
+@keyframes stroke-wipe {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes stroke-fade {
+  from {
+    clip-path: inset(0 0 0 0);
+    opacity: 0;
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stroke-piece,
+  .stroke-piece::after {
+    animation: none;
+    clip-path: none;
+  }
+}

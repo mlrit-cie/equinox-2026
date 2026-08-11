@@ -70,7 +70,7 @@ export function AnimeNavBar({
           className="relative flex items-center gap-3 rounded-full border border-white/10 bg-black/50 px-2 py-2 shadow-lg backdrop-blur-lg"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 260, damping: 20 }}
+          transition={{ type: "spring", stiffness: 500, damping: 28 }}
         >
           {items.map((item) => {
             const Icon = ICONS[item.name] ?? Circle;
@@ -86,7 +86,7 @@ export function AnimeNavBar({
                 onMouseEnter={() => setHoveredTab(item.name)}
                 onMouseLeave={() => setHoveredTab(null)}
                 className={cn(
-                  "relative cursor-pointer rounded-full px-6 py-3 text-sm font-semibold transition-all duration-300",
+                  "relative cursor-pointer rounded-full px-6 py-3 text-sm font-semibold transition-all duration-150",
                   "text-white/70 hover:text-white",
                   isActive && "text-white",
                 )}
@@ -137,7 +137,7 @@ export function AnimeNavBar({
                     layoutId="anime-mascot"
                     className="pointer-events-none absolute -top-12 left-1/2 -translate-x-1/2"
                     initial={false}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    transition={{ type: "spring", stiffness: 600, damping: 34 }}
                   >
                     <div className="relative h-12 w-12">
                       <motion.div

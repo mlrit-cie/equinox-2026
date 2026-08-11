@@ -45,7 +45,7 @@ body {
 }
 
 .shine {
-  animation: shine 3s ease-in-out infinite;
+  animation: shine 2s ease-in-out infinite;
 }
 
 @keyframes marquee {
@@ -55,7 +55,7 @@ body {
 }
 
 .marquee-track {
-  animation: marquee 28s linear infinite;
+  animation: marquee 16s linear infinite;
 }
 
 /* Hero word rotator: one word visible at a time inside a clipped line box.
@@ -84,7 +84,7 @@ body {
 }
 
 .rotator {
-  animation: rotate-words 10s cubic-bezier(0.76, 0, 0.24, 1) infinite;
+  animation: rotate-words 6s cubic-bezier(0.76, 0, 0.24, 1) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -115,9 +115,9 @@ details[open] .faq-plus {
 /* Timings live here — the whole navigation should land in ~250ms. Old content
    leaves fast, new content follows straight after. */
 :root {
-  --vt-exit: 80ms;
-  --vt-enter: 130ms;
-  --vt-move: 220ms;
+  --vt-exit: 70ms;
+  --vt-enter: 110ms;
+  --vt-move: 180ms;
 }
 
 ::view-transition-old(.nav-forward) {

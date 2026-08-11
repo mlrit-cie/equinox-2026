@@ -44,9 +44,9 @@ function Hero() {
             strokeColor="#4b5cff"
             fillColor="#ffffff"
             strokeWidth={1.4}
-            drawDuration={1.6}
-            fillDelay={0.2}
-            stagger={0.05}
+            drawDuration={0.7}
+            fillDelay={0.1}
+            stagger={0.03}
             fillMode="wipe"
           />
         </h1>
@@ -413,6 +413,8 @@ export default function Home() {
         title={event.venue}
         scrollHint="Keep scrolling"
         overlayScrim={0.2}
+        scrollDistance={0.55}
+        holdDistance={0.1}
       >
         <p>
           {event.date} · {event.host}

@@ -5,6 +5,7 @@
   --color-panel: #0b0f24;
   --color-panel-2: #121740;
   --color-electric: #2b3bff;
+  --color-primary: #2b3bff;
   --color-electric-soft: #4b5cff;
   --font-sans: var(--font-geist-sans), system-ui, sans-serif;
   --font-display: var(--font-display), var(--font-geist-sans), sans-serif;
@@ -31,6 +32,20 @@ body {
   opacity: 0.35;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* Sheen sweeping across the active nav pill. */
+@keyframes shine {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.shine {
+  animation: shine 3s ease-in-out infinite;
 }
 
 @keyframes marquee {
@@ -77,7 +92,8 @@ body {
     scroll-behavior: auto;
   }
   .marquee-track,
-  .rotator {
+  .rotator,
+  .shine {
     animation: none;
   }
 }
@@ -92,6 +108,110 @@ details > summary::-webkit-details-marker {
 }
 details[open] .faq-plus {
   transform: rotate(45deg);
+}
+
+/* ---- View transitions ------------------------------------------------ */
+
+/* Timings live here — the whole navigation should land in ~250ms. Old content
+   leaves fast, new content follows straight after. */
+:root {
+  --vt-exit: 80ms;
+  --vt-enter: 130ms;
+  --vt-move: 220ms;
+}
+
+::view-transition-old(.nav-forward) {
+  --slide-offset: -40px;
+  animation:
+    var(--vt-exit) ease-in both vt-fade reverse,
+    var(--vt-move) ease-in-out both vt-slide reverse;
+}
+::view-transition-new(.nav-forward) {
+  --slide-offset: 40px;
+  animation:
+    var(--vt-enter) ease-out var(--vt-exit) both vt-fade,
+    var(--vt-move) ease-in-out both vt-slide;
+}
+
+::view-transition-old(.nav-back) {
+  --slide-offset: 40px;
+  animation:
+    var(--vt-exit) ease-in both vt-fade reverse,
+    var(--vt-move) ease-in-out both vt-slide reverse;
+}
+::view-transition-new(.nav-back) {
+  --slide-offset: -40px;
+  animation:
+    var(--vt-enter) ease-out var(--vt-exit) both vt-fade,
+    var(--vt-move) ease-in-out both vt-slide;
+}
+
+/* Peer navigation from the nav bar: no direction to imply, so crossfade. */
+::view-transition-old(.nav-fade) {
+  animation: var(--vt-exit) ease-in both vt-fade reverse;
+}
+::view-transition-new(.nav-fade) {
+  animation: var(--vt-enter) ease-out var(--vt-exit) both vt-fade;
+}
+
+/* Blur hides interpolation artifacts while a card morphs into a hero. */
+::view-transition-group(.morph) {
+  animation-duration: var(--vt-move);
+}
+::view-transition-image-pair(.morph) {
+  animation-name: vt-blur;
+}
+
+/* The nav bar is the spatial anchor — it must not travel with the content. */
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(site-header) {
+  display: none;
+}
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+/* Clicks during a transition would otherwise land on the snapshot overlay. */
+::view-transition {
+  pointer-events: none;
+}
+
+@keyframes vt-fade {
+  from {
+    filter: blur(3px);
+    opacity: 0;
+  }
+  to {
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+
+@keyframes vt-slide {
+  from {
+    translate: var(--slide-offset);
+  }
+  to {
+    translate: 0;
+  }
+}
+
+@keyframes vt-blur {
+  30% {
+    filter: blur(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
 }
 
 /* Hide the speaker carousel scrollbar without killing the scroll. */

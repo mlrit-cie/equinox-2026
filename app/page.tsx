@@ -1,119 +1,30 @@
+import Link from "next/link";
 import {
   about,
   agenda,
   audience,
+  communities,
   event,
+  events,
   faqs,
   hosts,
   marquee,
-  nav,
-  socials,
+  partners,
   speakerCount,
   speakers,
   sponsors,
   tickets,
 } from "@/lib/content";
-
-function initials(name: string) {
-  return name
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-}
-
-/* Placeholder portrait: gradient tile with initials. Drop an <Image> in here
-   once real speaker photos exist. */
-function Avatar({ name, className = "" }: { name: string; className?: string }) {
-  return (
-    <div
-      className={`grid place-items-center bg-gradient-to-br from-white/20 to-white/5 text-white/60 ${className}`}
-    >
-      <span className="font-display text-[0.65em] tracking-widest">
-        {initials(name)}
-      </span>
-    </div>
-  );
-}
-
-function Eyebrow({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="flex items-center gap-3 text-sm text-white/70">
-      <span className="h-px w-8 bg-white/60" />
-      {children}
-    </p>
-  );
-}
-
-function SectionHeading({
-  eyebrow,
-  heading,
-}: {
-  eyebrow: string;
-  heading: string;
-}) {
-  return (
-    <div className="flex flex-col gap-6">
-      <Eyebrow>{eyebrow}</Eyebrow>
-      <h2 className="max-w-4xl text-4xl leading-[1.05] font-medium tracking-tight sm:text-5xl lg:text-6xl">
-        {heading}
-      </h2>
-    </div>
-  );
-}
-
-function Arrow({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" className={`h-4 w-4 ${className}`}>
-      <path
-        d="M4 12L12 4M12 4H5.5M12 4v6.5"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function Nav() {
-  return (
-    <header className="fixed inset-x-0 top-0 z-50 bg-gradient-to-b from-ink/70 to-transparent px-4 py-4 backdrop-blur-[2px] sm:px-8">
-      <nav className="mx-auto flex max-w-[1400px] items-center justify-between gap-4">
-        <a
-          href="#top"
-          className="font-display text-xl font-black tracking-[0.2em] text-white"
-        >
-          {event.name.toUpperCase()}
-        </a>
-        <div className="flex items-center gap-2">
-          <ul className="hidden items-center gap-2 md:flex">
-            {nav.map((item) => (
-              <li key={item.label}>
-                <a
-                  href={item.href}
-                  className="block rounded-full bg-white/10 px-5 py-2.5 text-sm text-white backdrop-blur-md transition hover:bg-white/20"
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-          <a
-            href={event.ticketUrl}
-            className="flex items-center gap-2 rounded-full bg-white py-1.5 pr-1.5 pl-5 text-sm font-semibold text-ink transition hover:bg-white/90"
-          >
-            Get Ticket
-            <span className="grid h-8 w-8 place-items-center rounded-full bg-electric text-white">
-              <Arrow />
-            </span>
-          </a>
-        </div>
-      </nav>
-    </header>
-  );
-}
+import StrokeText from "./StrokeText";
+import ScrollExpand from "./ScrollExpand";
+import {
+  Arrow,
+  Avatar,
+  EventCard,
+  PageTransition,
+  Person,
+  SectionHeading,
+} from "./ui";
 
 function Hero() {
   return (
@@ -127,8 +38,17 @@ function Hero() {
       <div className="pointer-events-none absolute top-24 right-1/4 h-20 w-20 rotate-45 rounded-xl bg-gradient-to-br from-white/30 to-electric/40" />
 
       <div className="relative mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-center">
-        <h1 className="text-center font-display text-[clamp(3rem,15vw,13rem)] leading-none font-black tracking-[-0.02em] text-white">
-          {event.name.toUpperCase()}
+        <h1 className="flex justify-center text-center font-display text-[clamp(3rem,15vw,13rem)] leading-none font-black tracking-[-0.02em] text-white">
+          <StrokeText
+            text={event.name.toUpperCase()}
+            strokeColor="#4b5cff"
+            fillColor="#ffffff"
+            strokeWidth={1.4}
+            drawDuration={1.6}
+            fillDelay={0.2}
+            stagger={0.05}
+            fillMode="wipe"
+          />
         </h1>
         <p className="mt-6 flex flex-wrap items-baseline justify-center gap-x-3 text-2xl text-white sm:text-3xl lg:text-4xl">
           <span>{event.tagline}</span>
@@ -285,15 +205,29 @@ function Speakers() {
   );
 }
 
-function Person({ name, role }: { name: string; role: string }) {
+function Events() {
   return (
-    <div className="flex items-center gap-3">
-      <Avatar name={name} className="h-11 w-11 shrink-0 rounded-full text-lg" />
-      <div className="min-w-0">
-        <p className="truncate font-medium">{name}</p>
-        <p className="truncate text-sm text-white/60">{role}</p>
+    <section id="events" className="mx-auto max-w-[1400px] px-4 py-24 sm:px-8">
+      <SectionHeading
+        eyebrow="Events"
+        heading="Six Events Running Across the Three Days"
+      />
+      <div className="mt-16 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+        {events.slice(0, 3).map((item) => (
+          <EventCard key={item.slug} event={item} />
+        ))}
       </div>
-    </div>
+      <Link
+        href="/events"
+        transitionTypes={["nav-forward"]}
+        className="mt-12 flex items-center gap-3"
+      >
+        See all {events.length} events
+        <span className="grid h-10 w-10 place-items-center rounded-full bg-white text-ink">
+          <Arrow />
+        </span>
+      </Link>
+    </section>
   );
 }
 
@@ -346,20 +280,39 @@ function Agenda() {
   );
 }
 
-function Sponsors() {
+function LogoGrid({ names }: { names: string[] }) {
   return (
-    <section className="mx-auto max-w-[1400px] px-4 py-24 sm:px-8">
+    <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-3 lg:grid-cols-4">
+      {names.map((name) => (
+        <div
+          key={name}
+          className="grid h-28 place-items-center bg-ink text-white/50"
+        >
+          {name}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Backers() {
+  return (
+    <section id="sponsors" className="mx-auto max-w-[1400px] px-4 py-24 sm:px-8">
       <SectionHeading
-        eyebrow="Sponsorship"
-        heading="Meet the sponsors who help bring this to life"
+        eyebrow="Sponsors, partners & communities"
+        heading="The people who help bring this to life"
       />
-      <div className="mt-16 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-3 lg:grid-cols-4">
-        {sponsors.map((sponsor) => (
-          <div
-            key={sponsor}
-            className="grid h-32 place-items-center bg-ink text-white/50"
-          >
-            {sponsor}
+      <div className="mt-16 flex flex-col gap-12">
+        {[
+          { title: "Sponsors", names: sponsors },
+          { title: "Partners", names: partners },
+          { title: "Communities", names: communities },
+        ].map((group) => (
+          <div key={group.title} className="flex flex-col gap-5">
+            <h3 className="text-sm tracking-[0.25em] text-white/50 uppercase">
+              {group.title}
+            </h3>
+            <LogoGrid names={group.names} />
           </div>
         ))}
       </div>
@@ -420,118 +373,61 @@ function Tickets() {
         eyebrow="Registration"
         heading={`Secure Your Spot at ${event.name} ${event.year} Today!`}
       />
-      <div className="mt-16 flex flex-col gap-6">
+      {/* Summary only — the passes and the flow live on /register. */}
+      <div className="mt-16 grid gap-4 sm:grid-cols-3">
         {tickets.map((ticket) => (
           <div
             key={ticket.name}
-            className="grid overflow-hidden rounded-3xl lg:grid-cols-[1fr_22rem]"
+            className="flex flex-col gap-2 rounded-2xl bg-panel p-6"
           >
-            <div className="flex flex-col gap-6 bg-panel p-8">
-              <div className="flex flex-col gap-3">
-                <h3 className="text-2xl font-medium">{ticket.name}</h3>
-                <p className="max-w-xl leading-relaxed text-white/60">
-                  {ticket.description}
-                </p>
-              </div>
-              <ul className="flex flex-col gap-3">
-                {ticket.perks.map((perk) => (
-                  <li key={perk} className="border-l-2 border-white/25 pl-3">
-                    {perk}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="grain relative flex flex-col justify-between gap-10 bg-gradient-to-br from-electric to-panel-2 p-8">
-              <div className="relative flex flex-col gap-4">
-                <span className="w-max rounded-full bg-white/15 px-3 py-1 text-sm">
-                  {ticket.badge}
-                </span>
-                <div>
-                  <p className="text-5xl font-medium">{ticket.price}</p>
-                  <p className="text-white/70">{ticket.unit}</p>
-                </div>
-              </div>
-              <a
-                href={ticket.href}
-                className="relative flex items-center justify-between rounded-xl bg-white/15 px-5 py-4 font-semibold backdrop-blur-md transition hover:bg-white/25"
-              >
-                Buy Ticket
-                <Arrow />
-              </a>
-            </div>
+            <span className="w-max rounded-full bg-white/10 px-3 py-1 text-xs">
+              {ticket.badge}
+            </span>
+            <h3 className="text-xl font-medium">{ticket.name}</h3>
+            <p className="text-3xl font-medium">{ticket.price}</p>
+            <p className="text-sm text-white/50">{ticket.unit}</p>
           </div>
         ))}
       </div>
+      <Link
+        href="/register"
+        transitionTypes={["nav-forward"]}
+        className="mt-8 flex w-max items-center gap-2 rounded-full bg-white py-1.5 pr-1.5 pl-6 font-semibold text-ink transition hover:bg-white/90"
+      >
+        Register now
+        <span className="grid h-10 w-10 place-items-center rounded-full bg-electric text-white">
+          <Arrow />
+        </span>
+      </Link>
     </section>
-  );
-}
-
-function Footer() {
-  return (
-    <footer
-      id="contact"
-      className="grain relative overflow-hidden bg-[radial-gradient(80%_120%_at_50%_120%,#2b3bff_0%,#0d1236_45%,#05060f_80%)] px-4 pt-24 pb-10 sm:px-8"
-    >
-      <div className="relative mx-auto flex max-w-[1400px] flex-col gap-12">
-        <div className="flex flex-col justify-between gap-8 sm:flex-row">
-          <div className="flex flex-col gap-3">
-            <p className="text-white/60">Social</p>
-            <ul className="flex gap-3">
-              {socials.map((social) => (
-                <li key={social.label}>
-                  <a
-                    href={social.href}
-                    className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-xs transition hover:bg-white/20"
-                  >
-                    {social.label.slice(0, 2)}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <ul className="flex flex-wrap gap-6">
-            {nav.map((item) => (
-              <li key={item.label}>
-                <a href={item.href} className="text-white/70 hover:text-white">
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <p className="font-display text-[clamp(2.5rem,19vw,16rem)] leading-none font-black tracking-tight text-white/90">
-          {event.name.toUpperCase()}
-        </p>
-
-        <div className="flex flex-col justify-between gap-2 border-t border-white/15 pt-6 text-sm text-white/50 sm:flex-row">
-          <p>
-            © {event.year} {event.name}. All rights reserved.
-          </p>
-          <p>{event.host}</p>
-        </div>
-      </div>
-    </footer>
   );
 }
 
 export default function Home() {
   return (
-    <>
-      <Nav />
-      <main className="flex-1">
-        <Hero />
-        <About />
-        <Marquee />
-        <Audience />
-        <Speakers />
-        <Agenda />
-        <Sponsors />
-        <Faq />
-        <Hosts />
-        <Tickets />
-      </main>
-      <Footer />
-    </>
+    <PageTransition>
+      <Hero />
+      {/* Low scrim while the panel is a gradient; raise it toward 0.45 once a
+          real venue photo is passed as src. */}
+      <ScrollExpand
+        title={event.venue}
+        scrollHint="Keep scrolling"
+        overlayScrim={0.2}
+      >
+        <p>
+          {event.date} · {event.host}
+        </p>
+      </ScrollExpand>
+      <About />
+      <Marquee />
+      <Events />
+      <Audience />
+      <Speakers />
+      <Agenda />
+      <Backers />
+      <Faq />
+      <Hosts />
+      <Tickets />
+    </PageTransition>
   );
 }

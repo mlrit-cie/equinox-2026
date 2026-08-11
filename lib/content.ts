@@ -8,14 +8,18 @@ export const event = {
   date: "12–14 March 2026",
   venue: "MLR Institute of Technology, Hyderabad",
   host: "Centre for Innovation & Entrepreneurship, MLRIT",
-  ticketUrl: "#tickets",
+  ticketUrl: "/register",
 };
 
+/* Hash entries are absolute (`/#agenda`) so they still resolve from a
+   sub-route like /events/hackathon. */
 export const nav = [
-  { label: "Speakers", href: "#speakers" },
-  { label: "Agenda", href: "#agenda" },
-  { label: "Venue", href: "#venue" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: "/" },
+  { label: "Events", href: "/events" },
+  { label: "Speakers", href: "/#speakers" },
+  { label: "Agenda", href: "/#agenda" },
+  { label: "Register", href: "/register" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export const about = {
@@ -223,3 +227,188 @@ export const socials = [
   { label: "X", href: "#" },
   { label: "GitHub", href: "#" },
 ];
+
+/* One entry per sub-event. `spoc` is the student point of contact printed on
+   the event's own page — swap the placeholder gmails for the real ones. */
+export const events = [
+  {
+    slug: "hackathon",
+    name: "Hack the Equinox",
+    tagline: "24 hours, one working demo",
+    category: "Flagship",
+    day: "Day 1–2",
+    time: "12 Mar, 06.00 PM → 13 Mar, 06.00 PM",
+    venue: "Innovation Block, Ground Floor",
+    teamSize: "2–4 members",
+    fee: "₹400 per team",
+    prize: "₹50,000 pool",
+    about: [
+      "An overnight build sprint that runs straight through the first night of the summit. Problem statements drop at kickoff across AI, health, campus infrastructure and open track.",
+      "Mentors from the speaker lineup float through the hall all night. Judging is on a working demo, not a slide deck.",
+    ],
+    rules: [
+      "Teams of 2 to 4, at least one member must attend in person",
+      "All code written during the event; libraries and boilerplate are fine",
+      "Push to a public repo before the submission cutoff",
+      "Demos are 5 minutes plus 3 minutes of questions",
+    ],
+    spoc: { name: "Event SPOC One", email: "hackathon.equinox@gmail.com", phone: "+91 90000 00001" },
+  },
+  {
+    slug: "ideathon",
+    name: "Ideathon",
+    tagline: "Pitch the idea before you build it",
+    category: "Flagship",
+    day: "Day 1",
+    time: "12 Mar, 10.00 AM – 04.00 PM",
+    venue: "Seminar Hall A",
+    teamSize: "1–3 members",
+    fee: "₹200 per team",
+    prize: "₹20,000 pool",
+    about: [
+      "A single-day sprint from a blank page to a defensible pitch. Teams pick a track in the morning, work with mentors through the afternoon and pitch to a panel by evening.",
+      "No prototype required — the panel scores the problem, the insight and the plan.",
+    ],
+    rules: [
+      "Teams of 1 to 3",
+      "Idea must be original and unfunded",
+      "6-minute pitch, 4 minutes of questions",
+      "Deck template is shared at kickoff",
+    ],
+    spoc: { name: "Event SPOC Two", email: "ideathon.equinox@gmail.com", phone: "+91 90000 00002" },
+  },
+  {
+    slug: "robo-race",
+    name: "Robo Race",
+    tagline: "Fastest bot around the track wins",
+    category: "Technical",
+    day: "Day 2",
+    time: "13 Mar, 11.00 AM – 04.00 PM",
+    venue: "Mechanical Block Arena",
+    teamSize: "2–4 members",
+    fee: "₹300 per team",
+    prize: "₹15,000 pool",
+    about: [
+      "Wired or wireless bots run a timed obstacle track with ramps, gravel and a narrow bridge. Two qualifying heats, then knockouts.",
+      "Bring spares. Repairs between heats are allowed inside the pit window.",
+    ],
+    rules: [
+      "Bot must fit within 30 x 30 x 30 cm",
+      "Maximum 12V supply, no IC engines",
+      "One re-run allowed per team across the heats",
+      "Track walkthrough is 30 minutes before the first heat",
+    ],
+    spoc: { name: "Event SPOC Three", email: "roborace.equinox@gmail.com", phone: "+91 90000 00003" },
+  },
+  {
+    slug: "code-sprint",
+    name: "Code Sprint",
+    tagline: "Three hours, seven problems",
+    category: "Technical",
+    day: "Day 2",
+    time: "13 Mar, 10.00 AM – 01.00 PM",
+    venue: "Computer Lab 3",
+    teamSize: "Individual",
+    fee: "₹100",
+    prize: "₹10,000 pool",
+    about: [
+      "A timed competitive programming round of seven problems that ramp from warm-up to genuinely hard. Any language supported by the judge is allowed.",
+      "Leaderboard freezes for the last twenty minutes, so the ending is worth watching.",
+    ],
+    rules: [
+      "Individual participation only",
+      "Bring your own laptop; lab machines are backup",
+      "No internet beyond documentation mirrors",
+      "Ties broken by total submission time",
+    ],
+    spoc: { name: "Event SPOC Four", email: "codesprint.equinox@gmail.com", phone: "+91 90000 00004" },
+  },
+  {
+    slug: "design-jam",
+    name: "Design Jam",
+    tagline: "Redesign something people actually use",
+    category: "Design",
+    day: "Day 2",
+    time: "13 Mar, 02.00 PM – 06.00 PM",
+    venue: "Design Studio, Second Floor",
+    teamSize: "1–2 members",
+    fee: "₹150 per team",
+    prize: "₹10,000 pool",
+    about: [
+      "A four-hour jam on a real interface problem released at the start. Work in Figma, on paper, or anything in between.",
+      "Judged on the reasoning behind the flow as much as the final screens.",
+    ],
+    rules: [
+      "Teams of 1 or 2",
+      "Any tool, but the file must be shareable at submission",
+      "Present three screens and the reasoning in 5 minutes",
+      "Stock components allowed, stolen layouts are not",
+    ],
+    spoc: { name: "Event SPOC Five", email: "designjam.equinox@gmail.com", phone: "+91 90000 00005" },
+  },
+  {
+    slug: "startup-expo",
+    name: "Startup Expo",
+    tagline: "Take a stall, meet the floor",
+    category: "Showcase",
+    day: "Day 3",
+    time: "14 Mar, 10.00 AM – 05.00 PM",
+    venue: "Central Atrium",
+    teamSize: "Team or solo founder",
+    fee: "Free for exhibitors",
+    prize: "Best stall award",
+    about: [
+      "Student teams and early-stage startups get a stall for the day in the busiest corridor of the summit. Investors and recruiters walk the floor through the afternoon.",
+      "Stalls are allotted on application; bring whatever you have running.",
+    ],
+    rules: [
+      "Apply with a one-paragraph description of what you'll demo",
+      "One table and power point provided per stall",
+      "At least one team member present through the day",
+      "Setup closes 30 minutes before doors open",
+    ],
+    spoc: { name: "Event SPOC Six", email: "expo.equinox@gmail.com", phone: "+91 90000 00006" },
+  },
+];
+
+/* Organising board — printed on every event page and the contact page. */
+export const board = [
+  { name: "Board Member One", role: "Convenor, Equinox 2026", email: "convenor.equinox@gmail.com", phone: "+91 90000 10001" },
+  { name: "Board Member Two", role: "Student Lead, CIE", email: "lead.equinox@gmail.com", phone: "+91 90000 10002" },
+  { name: "Board Member Three", role: "Events Head", email: "events.equinox@gmail.com", phone: "+91 90000 10003" },
+  { name: "Board Member Four", role: "Sponsorship Head", email: "sponsors.equinox@gmail.com", phone: "+91 90000 10004" },
+  { name: "Board Member Five", role: "Operations Head", email: "ops.equinox@gmail.com", phone: "+91 90000 10005" },
+  { name: "Board Member Six", role: "Outreach & Media", email: "media.equinox@gmail.com", phone: "+91 90000 10006" },
+];
+
+export const partners = [
+  "Partner 01",
+  "Partner 02",
+  "Partner 03",
+  "Partner 04",
+  "Partner 05",
+  "Partner 06",
+];
+
+export const communities = [
+  "Community 01",
+  "Community 02",
+  "Community 03",
+  "Community 04",
+  "Community 05",
+  "Community 06",
+];
+
+export const registration = {
+  eyebrow: "Registration",
+  heading: `Register for ${event.name} ${event.year}`,
+  body: "One pass covers entry to the summit floor, keynotes and the expo. Individual events take their own team registration on top of the pass — pick the event page and write to its SPOC to hold a slot.",
+  /* Swap for the real form once it exists. */
+  formUrl: "#",
+  steps: [
+    { title: "Pick your pass", body: "General, VIP or a team pass for five. Passes are per person and cover all three days." },
+    { title: "Register your team", body: "For hackathon, ideathon, robo race and the rest, register the team on the event's page and confirm with its SPOC." },
+    { title: "Pay and confirm", body: "Complete payment through the registration form. Your confirmation and QR code arrive by email." },
+    { title: "Collect your kit", body: "Show the QR at the registration desk on 12 March from 08.30 AM to pick up your badge and kit." },
+  ],
+};

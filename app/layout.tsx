@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Orbitron } from "next/font/google";
+import { Geist, Geist_Mono, Syne } from "next/font/google";
 import { event, nav } from "@/lib/content";
-import { AnimeNavBar } from "./AnimeNavBar";
+import { NavBar } from "./NavBar";
 import { Footer } from "./Footer";
 import "./globals.css";
 
@@ -10,10 +10,18 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const display = Orbitron({
-  variable: "--font-display",
+/* Utility face for scannable data — times, fees, prize pools, eyebrows. */
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
-  weight: ["600", "700", "800", "900"],
+});
+
+/* Display face. Syne widens as it gets heavier, so the wordmark carries the
+   day/night tension the whole design is built on. */
+const display = Syne({
+  variable: "--font-syne",
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -28,10 +36,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       /* Tells the router our smooth scrolling is deliberate, so it suppresses
          it during route transitions instead of warning. */
       data-scroll-behavior="smooth"
-      className={`${geistSans.variable} ${display.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${display.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">
-        <AnimeNavBar
+      <body className="night flex min-h-full flex-col">
+        <NavBar
           items={nav.map((item) => ({ name: item.label, url: item.href }))}
         />
         <main className="flex-1">{children}</main>

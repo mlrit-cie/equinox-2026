@@ -1,27 +1,28 @@
-/* max-width matters as much as width: an <svg> reports an intrinsic width, and
-   without the cap it hands that figure to the flex column as a minimum and
-   drags the whole hero wider than the viewport. */
 .stroke-text {
+  /* The container the wordmark's cqw size resolves against — its own column,
+     so the letters track the layout with no breakpoint tuning. */
+  container-type: inline-size;
   display: block;
   width: 100%;
-  max-width: 100%;
-  height: auto;
 }
 
-.stroke-text text {
+.stroke-text-line {
+  display: block;
+  text-align: center;
+  white-space: nowrap;
   font-family: var(--font-display);
   font-weight: 800;
   letter-spacing: -0.035em;
+  /* Tight to the caps: the line box is what the hero centres the horizon on,
+     so leading either side of the caps would push the line off their middle. */
+  line-height: 0.72;
 }
 
-/* Each cap arrives as a violet hairline and fills in behind itself. Stroke
-   width is in user units: 1/1000 of the rendered width, so it stays a hairline
-   at every size instead of thickening on a wide screen. */
-.stroke-text tspan {
-  fill: var(--fill-color, #fff);
-  stroke: var(--stroke-color, #4b5cff);
-  stroke-width: 1;
-  paint-order: stroke fill;
+/* Each cap arrives as a violet hairline and fills in behind itself. */
+.stroke-text-line > span {
+  display: inline-block;
+  color: var(--fill-color, #fff);
+  -webkit-text-stroke: 1px var(--stroke-color, #4b5cff);
   animation: stroke-in var(--draw-dur, 0.7s) var(--stroke-ease, ease-out) both;
   animation-delay: calc(
     var(--i, 0) * var(--stagger, 0.03s) + var(--fill-delay, 0.1s)
@@ -30,23 +31,23 @@
 
 @keyframes stroke-in {
   from {
-    fill-opacity: 0;
-    stroke-opacity: 1;
+    color: transparent;
+    -webkit-text-stroke-color: var(--stroke-color, #4b5cff);
   }
   55% {
-    fill-opacity: 0;
-    stroke-opacity: 1;
+    color: transparent;
+    -webkit-text-stroke-color: var(--stroke-color, #4b5cff);
   }
   to {
-    fill-opacity: 1;
-    stroke-opacity: 0;
+    color: var(--fill-color, #fff);
+    -webkit-text-stroke-color: transparent;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .stroke-text tspan {
+  .stroke-text-line > span {
     animation: none;
-    fill-opacity: 1;
-    stroke-opacity: 0;
+    color: var(--fill-color, #fff);
+    -webkit-text-stroke-color: transparent;
   }
 }

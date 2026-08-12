@@ -1,18 +1,25 @@
 /* Per-character stroke-then-fill, driven entirely by CSS so it plays on first
    paint (no client JS, no hydration wait).
 
-   Drawn as SVG rather than HTML text because the wordmark must fit its column
-   at every window aspect. A viewBox scales to the box it is given and keeps its
-   own proportions doing it, so there is no font-size to tune per breakpoint and
-   no way for the letters to run off the edge. `textLength` pins the text to the
-   viewBox width, so the em estimate below only has to be close. */
+   Plain text, not SVG. An <svg> has an intrinsic aspect ratio, and every way of
+   making one fit a fluid column — viewBox height from guessed font metrics,
+   textLength, preserveAspectRatio — is a bet on numbers that change with the
+   resolved face. Lose the bet and the letters stretch, crop, or overflow. Text
+   has no aspect ratio to get wrong: it is laid out by the same font metrics
+   that draw it, so it is correct by construction at every width. */
 
 import "./StrokeText.css";
 
-/* Syne caps average ~1.09em of advance. Only used to pick a font-size that
-   makes `textLength` a nudge rather than a stretch. */
+/* Syne caps average ~1.09em of advance (measured, at the tracking below), so
+   `chars * EM_PER_CAP` ems is the run's width. FILL keeps it just inside the
+   column: a face whose caps run wider than Syne's eats the slack instead of
+   spilling, and 3% of under-fill is invisible where an overflow is not. */
 const EM_PER_CAP = 1.09;
-const VB_WIDTH = 1000;
+const FILL = 0.97;
+
+/* Ceiling for short, wide windows, where a width-driven size would otherwise
+   grow the wordmark into the tagline. */
+const MAX_HEIGHT = "26vh";
 
 export default function StrokeText({
   text,
@@ -34,16 +41,14 @@ export default function StrokeText({
   className?: string;
 }) {
   const chars = [...text];
-  const fontSize = VB_WIDTH / (EM_PER_CAP * chars.length);
-  const baseline = fontSize * 0.67; /* cap height */
-  const height = Math.round(baseline + fontSize * 0.21); /* Q's tail */
+  const width = (100 * FILL) / (EM_PER_CAP * chars.length);
 
   return (
-    <svg
+    /* The outer span is the query container the size below resolves against,
+       so the wordmark tracks its column without page.tsx having to declare it. */
+    <span
       role="img"
       aria-label={text}
-      viewBox={`0 0 ${VB_WIDTH} ${height}`}
-      preserveAspectRatio="xMidYMid meet"
       className={`stroke-text ${className}`}
       style={
         {
@@ -56,20 +61,17 @@ export default function StrokeText({
         } as React.CSSProperties
       }
     >
-      <text
-        x={VB_WIDTH / 2}
-        y={baseline}
-        fontSize={fontSize}
-        textAnchor="middle"
-        textLength={VB_WIDTH}
-        lengthAdjust="spacing"
+      <span
+        aria-hidden
+        className="stroke-text-line"
+        style={{ fontSize: `min(${width}cqw, ${MAX_HEIGHT})` }}
       >
         {chars.map((char, i) => (
-          <tspan key={i} style={{ "--i": i } as React.CSSProperties}>
+          <span key={i} style={{ "--i": i } as React.CSSProperties}>
             {char}
-          </tspan>
+          </span>
         ))}
-      </text>
-    </svg>
+      </span>
+    </span>
   );
 }

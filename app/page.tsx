@@ -45,12 +45,10 @@ function Hero() {
             aria-hidden
             className="pointer-events-none absolute inset-x-[-100vw] top-1/2 h-[2px] bg-[#ede9fe] shadow-[0_0_2px_1px_rgba(237,233,254,0.9),0_0_28px_5px_rgba(139,92,246,0.55)]"
           />
-          {/* No font-size here on purpose: the wordmark is an SVG viewBox, so it
-              fills the column exactly and keeps its proportions. max-h keeps it
-              off the tagline when the window is short and wide. */}
+          {/* No font-size here on purpose: the wordmark sizes itself off the
+              width of this column, so there is nothing to tune per breakpoint. */}
           <h1 className="relative">
             <StrokeText
-              className="max-h-[26vh]"
               text={event.name.toUpperCase()}
               strokeColor="#a78bfa"
               fillColor="#edeaf5"

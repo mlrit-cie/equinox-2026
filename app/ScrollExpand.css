@@ -39,9 +39,9 @@
   inset: 0;
   background: radial-gradient(
     120% 100% at 50% 0%,
-    var(--color-electric, #2b3bff) 0%,
-    var(--color-panel-2, #121740) 45%,
-    var(--color-ink, #04050a) 100%
+    var(--color-beam, #a78bfa) 0%,
+    var(--color-surface-2, #1f1740) 45%,
+    var(--color-night, #0a0812) 100%
   );
 }
 
@@ -63,25 +63,32 @@
   text-align: left;
 }
 
+/* Always sits on a scrimmed image, so these colours are fixed to the night
+   ground rather than following the section's tokens. */
 .scroll-expand-copy h2 {
+  font-family: var(--font-display);
   font-size: clamp(1.75rem, 5vw, 4rem);
-  font-weight: 500;
-  line-height: 1.05;
+  font-weight: 700;
+  line-height: 1.04;
   letter-spacing: -0.02em;
 }
 
 .scroll-expand-copy p {
   max-width: 44ch;
-  color: rgb(255 255 255 / 0.75);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  letter-spacing: 0.06em;
+  color: rgb(255 255 255 / 0.8);
 }
 
 .scroll-expand-hint {
   position: absolute;
   bottom: 2rem;
-  font-size: 0.875rem;
-  letter-spacing: 0.3em;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgb(255 255 255 / 0.6);
+  color: var(--color-beam, #a78bfa);
   animation: sx-fade linear both;
   animation-timeline: --sx;
   animation-range: contain 0% contain calc(var(--sx-range, 77%) / 2);

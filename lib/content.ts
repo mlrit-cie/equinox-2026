@@ -23,8 +23,8 @@ export const nav = [
 ];
 
 export const about = {
-  eyebrow: "About Equinox",
-  heading: "Why You Absolutely Should Attend Equinox 2026",
+  eyebrow: "About",
+  heading: "Built, not presented",
   body: [
     "Equinox is the flagship innovation summit of CIE MLRIT — three days where students, founders, engineers and investors gather to build, demo and argue about what comes next. Expect keynotes from people shipping real products, hands-on workshops, and a hackathon that runs straight through the night.",
     "You'll see working demos rather than slide decks, meet teams hiring for their first ten roles, and leave with a network that outlasts the weekend. Come to build something, not just to watch.",
@@ -32,10 +32,29 @@ export const about = {
 };
 
 export const audience = {
-  eyebrow: "For Whom?",
-  heading: "Who Should Definitely Attend Equinox 2026",
+  eyebrow: "Audience",
+  heading: "Who it's for",
   note: "Whether you're shipping your first side project or your third company, Equinox is built to give you the room, the people and the momentum to go further.",
-  groups: ["Students", "Founders", "Developers", "Investors"],
+  /* Each group names what is actually on the floor for them — a label with no
+     substance behind it is decoration. */
+  groups: [
+    {
+      name: "Students",
+      what: "Six events to enter, a hackathon that runs straight through the first night, and mentors on the floor all three days.",
+    },
+    {
+      name: "Founders",
+      what: "A stall at the expo on day three, investors walking that floor through the afternoon, and a hall full of people who will try what you built.",
+    },
+    {
+      name: "Developers",
+      what: "Workshop tracks across AI, embedded systems and product. Bring a laptop — the code sprint runs on the morning of day two.",
+    },
+    {
+      name: "Investors",
+      what: "Hackathon demos and the expo on day three, or the ideathon pitches on day one if you want to see teams earlier.",
+    },
+  ],
 };
 
 export const marquee = ["Innovation", "Networking", "Building", "Learning"];
@@ -171,8 +190,8 @@ export const faqs = [
 ];
 
 export const hosts = {
-  eyebrow: "Our Host",
-  heading: "Meet Our Hosts: The Team Behind Equinox 2026",
+  eyebrow: "Organisers",
+  heading: "Run by CIE MLRIT",
   body: "Equinox is run by the Centre for Innovation & Entrepreneurship at MLR Institute of Technology — a student-led team of builders, designers and organizers who spend the year turning a campus into a place where things get made.",
 };
 

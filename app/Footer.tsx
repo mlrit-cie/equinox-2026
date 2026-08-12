@@ -5,29 +5,31 @@ export function Footer() {
   return (
     <footer
       id="contact"
-      className="grain relative overflow-hidden bg-[radial-gradient(80%_120%_at_50%_120%,#2b3bff_0%,#0d1236_45%,#05060f_80%)] px-4 pt-24 pb-10 sm:px-8"
+      className="grain relative overflow-hidden bg-[radial-gradient(90%_130%_at_50%_130%,#2e1b54_0%,#150f2b_45%,#07060e_80%)] px-4 pt-24 pb-10 sm:px-8"
     >
-      <div className="relative mx-auto flex max-w-[1400px] flex-col gap-12">
+      <div className="@container relative mx-auto flex max-w-[1400px] flex-col gap-12">
         <div className="flex flex-col justify-between gap-8 sm:flex-row">
           <div className="flex flex-col gap-3">
-            <p className="text-white/60">Social</p>
+            <p className="label text-fg/70">Social</p>
             <ul className="flex gap-3">
               {socials.map((social) => (
                 <li key={social.label}>
+                  {/* Spelled out — a two-letter abbreviation made GitHub read
+                      as "GI" and LinkedIn as "LI". */}
                   <a
                     href={social.href}
-                    className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-xs transition hover:bg-white/20"
+                    className="press label rounded-full border border-fg/15 px-4 py-2.5 transition-colors hover:border-beam hover:text-beam"
                   >
-                    {social.label.slice(0, 2)}
+                    {social.label}
                   </a>
                 </li>
               ))}
             </ul>
           </div>
-          <ul className="flex flex-wrap gap-6">
+          <ul className="label flex flex-wrap gap-6">
             {nav.map((item) => (
               <li key={item.label}>
-                <Link href={item.href} className="text-white/70 hover:text-white">
+                <Link href={item.href} className="text-fg/70 hover:text-beam">
                   {item.label}
                 </Link>
               </li>
@@ -35,11 +37,15 @@ export function Footer() {
           </ul>
         </div>
 
-        <p className="font-display text-[clamp(2.5rem,19vw,16rem)] leading-none font-black tracking-tight text-white/90">
+        {/* The sign-off restates the thesis: one wordmark, lit on top, dark
+            below, split on a hard line. */}
+        {/* Sized in cqw, not vw — past 1400px the container stops growing and a
+            vw-sized wordmark ran off the right edge. */}
+        <p className="display bg-[linear-gradient(to_bottom,#edeaf5_0_50%,#3a2d63_50%_100%)] bg-clip-text text-[13cqw] text-transparent">
           {event.name.toUpperCase()}
         </p>
 
-        <div className="flex flex-col justify-between gap-2 border-t border-white/15 pt-6 text-sm text-white/50 sm:flex-row">
+        <div className="label flex flex-col justify-between gap-2 border-t border-fg/15 pt-6 text-fg/70 sm:flex-row">
           <p>
             © {event.year} {event.name}. All rights reserved.
           </p>

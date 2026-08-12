@@ -5,9 +5,11 @@ export function Footer() {
   return (
     <footer
       id="contact"
-      className="grain relative overflow-hidden bg-[radial-gradient(90%_130%_at_50%_130%,#2e1b54_0%,#150f2b_45%,#07060e_80%)] px-4 pt-24 pb-10 sm:px-8"
+      className="grain relative overflow-hidden bg-[radial-gradient(90%_130%_at_50%_130%,#2e1b54_0%,#150f2b_45%,#07060e_80%)] pt-24 pb-10"
     >
-      <div className="@container relative mx-auto flex max-w-[1400px] flex-col gap-12">
+      {/* Gutter inside the cap, matching every body section — with it outside,
+          the footer's content edge sits 32px wider than the page above it. */}
+      <div className="@container relative mx-auto flex max-w-[1400px] flex-col gap-12 px-4 sm:px-8">
         <div className="flex flex-col justify-between gap-8 sm:flex-row">
           <div className="flex flex-col gap-3">
             <p className="label text-fg/70">Social</p>

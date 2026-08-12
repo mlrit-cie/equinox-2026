@@ -33,9 +33,11 @@ function Hero() {
   return (
     <section
       id="top"
-      className="grain relative flex min-h-svh flex-col justify-between overflow-hidden bg-[radial-gradient(110%_32%_at_50%_50%,#4c2a8f_0%,#170f2e_45%,#07060e_100%)] px-4 pt-28 pb-10 sm:px-8 sm:pt-32"
+      className="grain relative flex min-h-svh flex-col justify-between overflow-hidden bg-[radial-gradient(110%_32%_at_50%_50%,#4c2a8f_0%,#170f2e_45%,#07060e_100%)] pt-28 pb-10 sm:pt-32"
     >
-      <div className="relative mx-auto flex w-full min-w-0 max-w-[1400px] flex-1 flex-col justify-center">
+      {/* Gutter inside the cap, matching every body section — with it outside,
+          the wordmark runs 32px wider than the content that follows it. */}
+      <div className="relative mx-auto flex w-full min-w-0 max-w-[1400px] flex-1 flex-col justify-center px-4 sm:px-8">
         <div className="relative">
           {/* The horizon. Full-bleed, clipped by the section. Near-white core
               with a purple halo — the way a bright edge actually reads. */}
@@ -72,7 +74,7 @@ function Hero() {
         </p>
       </div>
 
-      <div className="label relative mx-auto flex w-full max-w-[1400px] flex-col gap-4 text-fg/80 sm:flex-row sm:items-center sm:gap-6">
+      <div className="label relative mx-auto flex w-full max-w-[1400px] flex-col gap-4 px-4 text-fg/80 sm:flex-row sm:items-center sm:gap-6 sm:px-8">
         <span className="data whitespace-nowrap">{event.date}</span>
         <span className="hidden h-px flex-1 bg-fg/25 sm:block" />
         <span className="whitespace-nowrap">{event.venue}</span>

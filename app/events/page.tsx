@@ -13,7 +13,7 @@ export default function EventsPage() {
       <section className="mx-auto max-w-[1400px] px-4 pt-40 pb-24 sm:px-8">
         <SectionHeading
           eyebrow="Events"
-          heading={`Everything Running Across the Three Days of ${event.name} ${event.year}`}
+          heading={`All ${events.length} events`}
         />
         <div className="mt-16 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
           {events.map((item) => (

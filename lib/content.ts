@@ -195,6 +195,13 @@ export const hosts = {
   body: "Equinox is run by the Centre for Innovation & Entrepreneurship at MLR Institute of Technology — a student-led team of builders, designers and organizers who spend the year turning a campus into a place where things get made.",
 };
 
+export const contact = {
+  eyebrow: "Contact",
+  heading: "Get in touch",
+  body: "Have questions about Equinox 2026? Reach out to the organizing board or the specific event coordinators. We're here to help you make the most of the summit.",
+  email: "equinox2026@gmail.com",
+};
+
 export const tickets = [
   {
     name: "General Admission",
@@ -241,9 +248,9 @@ export const tickets = [
 ];
 
 export const socials = [
-  { label: "Instagram", href: "#" },
-  { label: "LinkedIn", href: "#" },
-  { label: "X", href: "#" },
+  { label: "Instagram", href: "https://www.instagram.com/mlritcie/" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/cie-center-for-innovation-and-entrepreneurship-mlrit/" },
+  { label: "X", href: "https://x.com/ciemlrit" },
   { label: "GitHub", href: "#" },
 ];
 
@@ -394,10 +401,6 @@ export const events = [
 export const board = [
   { name: "Board Member One", role: "Convenor, Equinox 2026", email: "convenor.equinox@gmail.com", phone: "+91 90000 10001" },
   { name: "Board Member Two", role: "Student Lead, CIE", email: "lead.equinox@gmail.com", phone: "+91 90000 10002" },
-  { name: "Board Member Three", role: "Events Head", email: "events.equinox@gmail.com", phone: "+91 90000 10003" },
-  { name: "Board Member Four", role: "Sponsorship Head", email: "sponsors.equinox@gmail.com", phone: "+91 90000 10004" },
-  { name: "Board Member Five", role: "Operations Head", email: "ops.equinox@gmail.com", phone: "+91 90000 10005" },
-  { name: "Board Member Six", role: "Outreach & Media", email: "media.equinox@gmail.com", phone: "+91 90000 10006" },
 ];
 
 export const partners = [

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Equinox logo: half-lit disc representing day/night balance -->
+  <circle cx="50" cy="50" r="45" fill="#a78bfa" stroke="#edeaf5" stroke-width="2"/>
+  <path d="M50 5 A45 45 0 0 1 50 95 A45 45 0 0 1 50 5" fill="#0a0812"/>
+  <circle cx="50" cy="50" r="8" fill="#edeaf5"/>
+</svg>

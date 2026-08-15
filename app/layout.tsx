@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Syne } from "next/font/google";
 import { event, nav } from "@/lib/content";
-import { NavBar } from "./NavBar";
+import PillNav from "./PillNav";
 import { Footer } from "./Footer";
 import "./globals.css";
 
@@ -39,8 +39,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} ${display.variable} h-full antialiased`}
     >
       <body className="night flex min-h-full flex-col">
-        <NavBar
-          items={nav.map((item) => ({ name: item.label, url: item.href }))}
+        <PillNav
+          logo="/logo.svg"
+          logoAlt={`${event.name} ${event.year} Logo`}
+          items={nav}
+          baseColor="#0a0812"  // night background
+          pillColor="#a78bfa"  // beam purple
+          hoveredPillTextColor="#0a0812"  // night background
+          pillTextColor="#edeaf5"  // fg color
+          ease="power3.out"
+          initialLoadAnimation={true}
         />
         <main className="flex-1">{children}</main>
         <Footer />

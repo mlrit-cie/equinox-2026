@@ -4,7 +4,7 @@ import { EventCard, PageTransition, SectionHeading } from "../ui";
 
 export const metadata: Metadata = {
   title: `Events — ${event.name} ${event.year}`,
-  description: `Every event at ${event.name} ${event.year}: hackathon, ideathon, robo race, code sprint, design jam and the startup expo.`,
+  description: `Every event at ${event.name} ${event.year}: hackathon, ideathon, IPL auction, code sprint, design jam and the startup expo.`,
 };
 
 export default function EventsPage() {

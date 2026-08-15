@@ -37,26 +37,32 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
 
   return (
     <PageTransition>
-      {/* Same name as the card on the events grid, so the tile grows into this
-          hero instead of the page blinking over. */}
       <ViewTransition name={`event-${item.slug}`} share="morph" default="none">
-        <section className="grain relative flex min-h-[70svh] flex-col justify-end overflow-hidden bg-[radial-gradient(120%_55%_at_50%_100%,#4c2a8f_0%,#170f2e_48%,#07060e_100%)] px-4 pt-40 pb-12 sm:px-8">
-          {/* The horizon again, low in the frame — the same device as the home
-              hero so an event page reads as the same world. */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-[#ede9fe] shadow-[0_0_2px_1px_rgba(237,233,254,0.9),0_0_28px_5px_rgba(139,92,246,0.5)]"
-          />
-          <div className="relative mx-auto flex w-full max-w-[1400px] flex-col gap-4">
-            <Eyebrow>
-              {item.category} · {item.day}
-            </Eyebrow>
-            <h1 className="display max-w-4xl text-4xl sm:text-6xl lg:text-7xl">
-              {item.name}
-            </h1>
-            <p className="max-w-2xl text-xl text-fg/75">{item.tagline}</p>
+        {slug === "ipl-auction" ? (
+          <div className="w-full h-screen relative">
+            <iframe 
+              src="/ipl-auction.html" 
+              className="absolute inset-0 w-full h-full border-0 pointer-events-auto"
+              title="IPL Auction 3D Hero"
+            />
           </div>
-        </section>
+        ) : (
+          <section className="grain relative flex min-h-[70svh] flex-col justify-end overflow-hidden bg-[radial-gradient(120%_55%_at_50%_100%,#4c2a8f_0%,#170f2e_48%,#07060e_100%)] px-4 pt-40 pb-12 sm:px-8">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-[#ede9fe] shadow-[0_0_2px_1px_rgba(237,233,254,0.9),0_0_28px_5px_rgba(139,92,246,0.5)]"
+            />
+            <div className="relative mx-auto flex w-full max-w-[1400px] flex-col gap-4">
+              <Eyebrow>
+                {item.category} · {item.day}
+              </Eyebrow>
+              <h1 className="display max-w-4xl text-4xl sm:text-6xl lg:text-7xl">
+                {item.name}
+              </h1>
+              <p className="max-w-2xl text-xl text-fg/75">{item.tagline}</p>
+            </div>
+          </section>
+        )}
       </ViewTransition>
 
       <section className="mx-auto max-w-[1400px] px-4 py-16 sm:px-8">

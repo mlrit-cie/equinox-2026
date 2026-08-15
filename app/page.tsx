@@ -1,3 +1,4 @@
+'use client';
 import Link from "next/link";
 import {
   about,
@@ -17,6 +18,8 @@ import {
 } from "@/lib/content";
 import StrokeText from "./StrokeText";
 import ScrollExpand from "./ScrollExpand";
+import ChromaGrid, { speakersToChromaItems } from "./ChromaGrid";
+import SpecularButton from "./SpecularButton";
 import {
   Arrow,
   Avatar,
@@ -161,6 +164,8 @@ function Audience() {
 }
 
 function Speakers() {
+  const speakerItems = speakersToChromaItems(speakers);
+
   return (
     <section id="speakers" className="py-24">
       <div className="mx-auto max-w-[1400px] px-4 sm:px-8">
@@ -170,55 +175,21 @@ function Speakers() {
         />
       </div>
 
-      {/* scroll-px keeps snapping from eating the container padding */}
-      <ul className="no-scrollbar mt-16 flex snap-x snap-mandatory scroll-px-4 gap-6 overflow-x-auto px-4 pb-4 sm:scroll-px-8 sm:px-8">
-        {speakers.map((speaker, i) => (
-          <li
-            key={speaker.name}
-            className={`w-[280px] shrink-0 snap-start sm:w-[320px] ${
-              i % 2 ? "sm:-mt-10" : ""
-            }`}
-          >
-            <div className="relative">
-              <Avatar
-                name={speaker.name}
-                className="aspect-[4/5] rounded-2xl bg-surface text-6xl"
-              />
-              <div className="label absolute right-3 bottom-3 flex gap-2">
-                <a
-                  href={speaker.instagram}
-                  aria-label={`${speaker.name} on Instagram`}
-                  className="press grid h-9 w-9 place-items-center rounded-lg bg-fg text-ground"
-                >
-                  IG
-                </a>
-                <a
-                  href={speaker.linkedin}
-                  aria-label={`${speaker.name} on LinkedIn`}
-                  className="press grid h-9 w-9 place-items-center rounded-lg bg-fg text-ground"
-                >
-                  in
-                </a>
-              </div>
-            </div>
-            <h3 className="heading mt-4 text-xl">{speaker.name}</h3>
-            <p className="text-fg/70">{speaker.role}</p>
-          </li>
-        ))}
-      </ul>
+      {/* ChromaGrid replaces the scroller — cursor-tracked spotlight plus a
+          per-speaker accent card. Each tile shows the speaker's name and role. */}
+      <div className="mx-auto mt-16 max-w-[1400px] px-4 sm:px-8">
+        <ChromaGrid
+          items={speakerItems}
+          radius={300}
+          damping={0.45}
+          fadeOut={0.6}
+          ease="power3.out"
+        />
+      </div>
 
-      <div className="mx-auto mt-12 flex max-w-[1400px] items-center gap-6 px-4 sm:px-8">
+      <div className="mx-auto mt-4 flex max-w-[1400px] items-center gap-6 px-4 sm:px-8">
         <span className="label whitespace-nowrap text-accent">{speakerCount}</span>
         <span className="h-px flex-1 bg-fg/20" />
-        <a
-          href="#speakers"
-          className="press flex items-center gap-3 whitespace-nowrap"
-        >
-          See All
-          <span className="grid h-10 w-10 place-items-center rounded-full bg-fg text-ground">
-            <Arrow />
-          </span>
-        </a>
       </div>
     </section>
   );
@@ -397,12 +368,19 @@ function Tickets() {
       <Link
         href="/register"
         transitionTypes={["nav-forward"]}
-        className="press mt-8 flex w-max items-center gap-2 rounded-full bg-fg py-1.5 pr-1.5 pl-6 font-semibold text-ground"
+        className="press mt-8 flex w-max items-center gap-2"
       >
-        Register now
-        <span className="grid h-10 w-10 place-items-center rounded-full bg-accent text-ground">
-          <Arrow />
-        </span>
+        <SpecularButton
+          size="lg"
+          textColor="#f5f5f5"
+          lineColor="#a78bfa"
+          baseColor="#525252"
+          radius={999}
+          tint="#1f2937"
+          tintOpacity={0.9}
+        >
+          Register now
+        </SpecularButton>
       </Link>
     </section>
   );
@@ -429,28 +407,15 @@ export default function Home() {
       <Marquee />
       <Events />
 
-      {/* The crossing. Everything above runs in the dark half, everything
-          below in the light half — equal grounds, one line between them. The
-          rising crossing lives inside the day wrapper so the light ground is
-          painted by one box and leaves no seam. */}
-      <div className="day">
-        <Terminator
-          into="day"
-          label="Vernal equinox · 20 March 2026 · day and night equal"
-        />
-        <Audience />
-        <Speakers />
-        <Agenda />
-        <Backers />
-        <Faq />
-        <Hosts />
-        <Tickets />
-      </div>
-
-      <Terminator
-        into="night"
-        label={`${event.name} ${event.year} · ${event.date} · Hyderabad`}
-      />
+      {/* Whole site runs on one dark ground now — the Equinox crossing is
+          dropped so every section shares the night theme. */}
+      <Audience />
+      <Speakers />
+      <Agenda />
+      <Backers />
+      <Faq />
+      <Hosts />
+      <Tickets />
     </PageTransition>
   );
 }

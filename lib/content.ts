@@ -60,15 +60,21 @@ export const audience = {
 export const marquee = ["Innovation", "Networking", "Building", "Learning"];
 
 export const speakers = [
-  { name: "Speaker One", role: "Chief Technology Officer", instagram: "#", linkedin: "#" },
-  { name: "Speaker Two", role: "Founder & CEO", instagram: "#", linkedin: "#" },
-  { name: "Speaker Three", role: "Principal Engineer", instagram: "#", linkedin: "#" },
-  { name: "Speaker Four", role: "Head of Design", instagram: "#", linkedin: "#" },
-  { name: "Speaker Five", role: "Partner, Seed Fund", instagram: "#", linkedin: "#" },
-  { name: "Speaker Six", role: "Director of Research", instagram: "#", linkedin: "#" },
+  { name: "Speaker One", role: "Chief Technology Officer", instagram: "#", linkedin: "#", image: "https://picsum.photos/seed/equinox-speaker-1/800/1000" },
+  { name: "Speaker Two", role: "Founder & CEO", instagram: "#", linkedin: "#", image: "https://picsum.photos/seed/equinox-speaker-2/800/1000" },
+  { name: "Speaker Three", role: "Principal Engineer", instagram: "#", linkedin: "#", image: "https://picsum.photos/seed/equinox-speaker-3/800/1000" },
+  { name: "Speaker Four", role: "Head of Design", instagram: "#", linkedin: "#", image: "https://picsum.photos/seed/equinox-speaker-4/800/1000" },
+  { name: "Speaker Five", role: "Partner, Seed Fund", instagram: "#", linkedin: "#", image: "https://picsum.photos/seed/equinox-speaker-5/800/1000" },
+  { name: "Speaker Six", role: "Director of Research", instagram: "#", linkedin: "#", image: "https://picsum.photos/seed/equinox-speaker-6/800/1000" },
+  { name: "Speaker Seven", role: "AI Research Lead", instagram: "#", linkedin: "#", image: "https://picsum.photos/seed/equinox-speaker-7/800/1000" },
+  { name: "Speaker Eight", role: "VP of Engineering", instagram: "#", linkedin: "#", image: "https://picsum.photos/seed/equinox-speaker-8/800/1000" },
+  { name: "Speaker Nine", role: "Product Manager", instagram: "#", linkedin: "#", image: "https://picsum.photos/seed/equinox-speaker-9/800/1000" },
+  { name: "Speaker Ten", role: "Solutions Architect", instagram: "#", linkedin: "#", image: "https://picsum.photos/seed/equinox-speaker-10/800/1000" },
+  { name: "Speaker Eleven", role: "Data Science Lead", instagram: "#", linkedin: "#", image: "https://picsum.photos/seed/equinox-speaker-11/800/1000" },
+  { name: "Speaker Twelve", role: "Engineering Manager", instagram: "#", linkedin: "#", image: "https://picsum.photos/seed/equinox-speaker-12/800/1000" },
 ];
 
-export const speakerCount = "20+ Speakers";
+export const speakerCount = "12 Speakers";
 
 export const agenda = [
   {

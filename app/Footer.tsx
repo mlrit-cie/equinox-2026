@@ -1,4 +1,5 @@
 import { event, socials } from "@/lib/content";
+import SpecularButton from "./SpecularButton";
 
 export function Footer() {
   return (
@@ -19,9 +20,20 @@ export function Footer() {
                       as "GI" and LinkedIn as "LI". */}
                   <a
                     href={social.href}
-                    className="press label rounded-full border border-fg/15 px-4 py-2.5 transition-colors hover:border-beam hover:text-beam"
+                    className="press block"
                   >
-                    {social.label}
+                    <SpecularButton
+                      size="sm"
+                      textColor="#f5f5f5"
+                      lineColor="#a78bfa"
+                      baseColor="#525252"
+                      radius={999}
+                      className="w-full justify-center min-w-[100px]"
+                      tint="#1f2937"
+                      tintOpacity={0.8}
+                    >
+                      {social.label}
+                    </SpecularButton>
                   </a>
                 </li>
               ))}

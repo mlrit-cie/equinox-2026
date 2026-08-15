@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { board, event, events, registration, tickets } from "@/lib/content";
 import { Arrow, ContactCard, PageTransition, SectionHeading } from "../ui";
+import SpecularButton from "../SpecularButton";
 
 export const metadata: Metadata = {
   title: `Register — ${event.name} ${event.year}`,
@@ -69,10 +70,18 @@ export default function RegisterPage() {
                 {/* Points at registration.formUrl until the real form exists. */}
                 <a
                   href={registration.formUrl}
-                  className="press flex items-center justify-between rounded-xl bg-day px-5 py-4 font-semibold text-night transition-colors hover:bg-day/90"
+                  className="press block rounded-xl bg-day font-semibold text-night transition-colors hover:bg-day/90"
                 >
-                  Get this pass
-                  <Arrow />
+                  <SpecularButton
+                    size="lg"
+                    textColor="#1f2937"
+                    lineColor="#a78bfa"
+                    baseColor="#525252"
+                    radius={12}
+                    className="w-full justify-center py-4"
+                  >
+                    Get this pass
+                  </SpecularButton>
                 </a>
               </div>
             </div>

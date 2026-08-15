@@ -5,6 +5,7 @@ import {
   SectionHeading,
 } from "../ui";
 import { board, contact, event } from "@/lib/content";
+import SpecularButton from "../SpecularButton";
 
 /* Same shape as About(): eyebrow/heading up top, an editorial lead paragraph,
    then the particulars — here the particulars are people instead of facts,
@@ -54,12 +55,17 @@ function Particulars() {
 
       <a
         href="/register"
-        className="press mt-12 flex w-max items-center gap-2 rounded-full bg-fg py-1.5 pr-1.5 pl-6 font-semibold text-ground"
+        className="press mt-12 flex w-max items-center gap-2"
       >
-        Register instead
-        <span className="grid h-10 w-10 place-items-center rounded-full bg-accent text-ground">
-          <Arrow />
-        </span>
+        <SpecularButton
+          size="lg"
+          textColor="#f5f5f5"
+          lineColor="#a78bfa"
+          baseColor="#525252"
+          radius={999}
+        >
+          Register instead
+        </SpecularButton>
       </a>
     </section>
   );

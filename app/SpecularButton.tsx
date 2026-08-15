@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, type CSSProperties } from 'react';
 import './SpecularButton.css';
 
 /* Specular highlight done without the `ogl` dependency (the package can't be
@@ -114,7 +114,7 @@ const SpecularButton = (
         '--sb-base': rgba(baseColor, 0.45),
         '--sb-bright': '0',
         '--sb-idle': '0rad',
-      } as React.CSSProperties}
+      } as CSSProperties}
     >
       <span ref={fxRef} className="specular-button__fx" aria-hidden="true" />
       <span className="specular-button__label">{children}</span>

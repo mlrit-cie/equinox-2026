@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, type CSSProperties } from 'react';
 import { gsap } from 'gsap';
 import './ChromaGrid.css';
 
@@ -17,6 +17,27 @@ const CHROMA_DEFAULTS = [
   '#ef4444',
 ];
 
+interface ChromaItem {
+  image: string;
+  title: string;
+  subtitle: string;
+  handle?: string;
+  borderColor: string;
+  gradient: string;
+  url?: string;
+}
+
+interface ChromaGridProps {
+  items?: ChromaItem[];
+  className?: string;
+  radius?: number;
+  columns?: number;
+  rows?: number;
+  damping?: number;
+  fadeOut?: number;
+  ease?: string;
+}
+
 export const ChromaGrid = ({
   items,
   className = '',
@@ -26,7 +47,7 @@ export const ChromaGrid = ({
   damping = 0.45,
   fadeOut = 0.6,
   ease = 'power3.out'
-}) => {
+}: ChromaGridProps) => {
   const rootRef = useRef(null);
   const fadeRef = useRef(null);
   const setX = useRef(null);
@@ -145,7 +166,7 @@ export const ChromaGrid = ({
         '--r': `${radius}px`,
         '--cols': columns,
         '--rows': rows
-      }}
+      } as CSSProperties}
       onPointerMove={handleMove}
       onPointerLeave={handleLeave}
     >
@@ -159,7 +180,7 @@ export const ChromaGrid = ({
             '--card-border': c.borderColor || 'transparent',
             '--card-gradient': c.gradient,
             cursor: c.url ? 'pointer' : 'default'
-          }}
+          } as CSSProperties}
         >
           <div className="chroma-img-wrapper">
             <img src={c.image} alt={c.title} loading="lazy" />
@@ -182,7 +203,14 @@ export default ChromaGrid;
 
 /* Build ChromaGrid items from the speakers content array, assigning a rotating
    accent colour so each speaker card reads as its own. */
-export function speakersToChromaItems(speakers) {
+interface SpeakerInput {
+  name: string;
+  role: string;
+  image: string;
+  linkedin: string;
+}
+
+export function speakersToChromaItems(speakers: SpeakerInput[]) {
   return speakers.map((speaker, i) => ({
     image: speaker.image,
     title: speaker.name,

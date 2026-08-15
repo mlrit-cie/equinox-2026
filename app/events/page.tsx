@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { event, events } from "@/lib/content";
-import { EventCard, PageTransition, SectionHeading } from "../ui";
+import { PageTransition, SectionHeading, EventCard } from "../ui";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: `Events — ${event.name} ${event.year}`,
@@ -16,8 +17,8 @@ export default function EventsPage() {
           heading={`All ${events.length} events`}
         />
         <div className="mt-16 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-          {events.map((item) => (
-            <EventCard key={item.slug} event={item} />
+          {events.map((eventItem) => (
+            <EventCard key={eventItem.slug} event={eventItem} />
           ))}
         </div>
       </section>

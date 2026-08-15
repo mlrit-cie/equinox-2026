@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { event, nav, socials } from "@/lib/content";
+import { event, socials } from "@/lib/content";
 
 export function Footer() {
   return (
@@ -28,15 +27,6 @@ export function Footer() {
               ))}
             </ul>
           </div>
-          <ul className="label flex flex-wrap gap-6">
-            {nav.map((item) => (
-              <li key={item.label}>
-                <Link href={item.href} className="text-fg/70 hover:text-beam">
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
         </div>
 
         {/* The sign-off restates the thesis: one wordmark, lit on top, dark

@@ -1,16 +1,14 @@
 "use client";
 
-/* Floating nav with dock-style magnification. The active tab carries the
-   half-lit disc — the site's mark — and both the disc and the pill behind
-   it slide between tabs on a critically damped spring. Dock-style magnification
-   responds to mouse proximity for a fluid, interactive feel.
+/* Floating nav with dock-style magnification and pill-style hover effects.
+   The active tab carries the half-lit disc — the site's mark — and both the
+   disc and the pill behind it slide between tabs on a critically damped spring.
+   Dock-style magnification responds to mouse proximity, and circular hover
+   effects expand from beneath each item using GSAP animations. */
 
-   Icons are resolved here from the item name (a server component cannot hand
-   component references across the boundary), and clicks do not preventDefault
-   so hash links still jump to their section. */
-
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, useReducedMotion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { gsap } from "gsap";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -41,7 +39,7 @@ const ICONS: Record<string, LucideIcon> = {
   Contact: Mail,
 };
 
-/* Individual nav item with dock-style magnification */
+/* Individual nav item with dock-style magnification + pill hover effect */
 function NavItem({
   item,
   isActive,
@@ -56,6 +54,12 @@ function NavItem({
   distance?: number;
 }) {
   const ref = useRef<HTMLAnchorElement>(null);
+  const circleRef = useRef<HTMLSpanElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
+  const hoverLabelRef = useRef<HTMLSpanElement>(null);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
+  const activeTweenRef = useRef<gsap.core.Tween | null>(null);
+
   const Icon = ICONS[item.name] ?? Circle;
   const reduce = useReducedMotion();
 
@@ -63,7 +67,84 @@ function NavItem({
     ? { duration: 0 }
     : ({ type: "spring", bounce: 0, duration: 0.4 } as const);
 
-  // Calculate distance from mouse to this element's center
+  // Setup GSAP circular hover animation
+  useEffect(() => {
+    const circle = circleRef.current;
+    const pill = ref.current;
+    const label = labelRef.current;
+    const hoverLabel = hoverLabelRef.current;
+
+    if (!circle || !pill) return;
+
+    const layout = () => {
+      const rect = pill.getBoundingClientRect();
+      const { width: w, height: h } = rect;
+      const R = ((w * w) / 4 + h * h) / (2 * h);
+      const D = Math.ceil(2 * R) + 2;
+      const delta = Math.ceil(R - Math.sqrt(Math.max(0, R * R - (w * w) / 4))) + 1;
+      const originY = D - delta;
+
+      circle.style.width = `${D}px`;
+      circle.style.height = `${D}px`;
+      circle.style.bottom = `-${delta}px`;
+
+      gsap.set(circle, {
+        xPercent: -50,
+        scale: 0,
+        transformOrigin: `50% ${originY}px`
+      });
+
+      if (label) gsap.set(label, { y: 0 });
+      if (hoverLabel) gsap.set(hoverLabel, { y: h + 12, opacity: 0 });
+
+      tlRef.current?.kill();
+      const tl = gsap.timeline({ paused: true });
+      tl.to(circle, { scale: 1.2, xPercent: -50, duration: 2, ease: "power3.out", overwrite: 'auto' }, 0);
+
+      if (label) {
+        tl.to(label, { y: -(h + 8), duration: 2, ease: "power3.out", overwrite: 'auto' }, 0);
+      }
+      if (hoverLabel) {
+        gsap.set(hoverLabel, { y: Math.ceil(h + 100), opacity: 0 });
+        tl.to(hoverLabel, { y: 0, opacity: 1, duration: 2, ease: "power3.out", overwrite: 'auto' }, 0);
+      }
+
+      tlRef.current = tl;
+    };
+
+    layout();
+    window.addEventListener('resize', layout);
+
+    return () => {
+      window.removeEventListener('resize', layout);
+      tlRef.current?.kill();
+      activeTweenRef.current?.kill();
+    };
+  }, []);
+
+  const handleMouseEnter = () => {
+    const tl = tlRef.current;
+    if (!tl) return;
+    activeTweenRef.current?.kill();
+    activeTweenRef.current = tl.tweenTo(tl.duration(), {
+      duration: 0.3,
+      ease: "power3.out",
+      overwrite: 'auto'
+    }) as gsap.core.Tween;
+  };
+
+  const handleMouseLeave = () => {
+    const tl = tlRef.current;
+    if (!tl) return;
+    activeTweenRef.current?.kill();
+    activeTweenRef.current = tl.tweenTo(0, {
+      duration: 0.2,
+      ease: "power3.out",
+      overwrite: 'auto'
+    }) as gsap.core.Tween;
+  };
+
+  // Calculate distance from mouse to this element's center for dock magnification
   const mouseDistance = useTransform(mouseX, (val) => {
     if (!ref.current) return distance;
     const rect = ref.current.getBoundingClientRect();
@@ -92,12 +173,25 @@ function NavItem({
         transitionTypes={["nav-fade"]}
         aria-current={isActive ? "page" : undefined}
         onClick={onClick}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         className={cn(
-          "press relative block rounded-full px-5 py-2.5 text-sm font-medium",
+          "press relative block rounded-full px-5 py-2.5 text-sm font-medium overflow-hidden",
           "text-fg/70 hover:text-fg focus-visible:ring-2 focus-visible:ring-beam focus-visible:outline-none",
           isActive && "text-fg",
         )}
       >
+        {/* Circular hover effect background */}
+        <span
+          ref={circleRef}
+          className="absolute left-1/2 bottom-0 rounded-full bg-beam pointer-events-none"
+          style={{
+            zIndex: 1,
+            willChange: 'transform'
+          }}
+          aria-hidden="true"
+        />
+
         {isActive && (
           <>
             <motion.span
@@ -116,8 +210,18 @@ function NavItem({
           </>
         )}
 
-        <span className="relative hidden md:inline">{item.name}</span>
-        <span className="relative md:hidden">
+        <span className="relative hidden md:inline z-10" ref={labelRef}>
+          {item.name}
+        </span>
+        <span
+          className="absolute hidden md:inline z-20 left-0 top-0 px-5 py-2.5 pointer-events-none"
+          ref={hoverLabelRef}
+          style={{ opacity: 0 }}
+          aria-hidden="true"
+        >
+          {item.name}
+        </span>
+        <span className="relative md:hidden z-10">
           <Icon size={18} strokeWidth={2} aria-hidden />
           <span className="sr-only">{item.name}</span>
         </span>

@@ -251,7 +251,6 @@ export const socials = [
   { label: "Instagram", href: "https://www.instagram.com/mlritcie/" },
   { label: "LinkedIn", href: "https://www.linkedin.com/company/cie-center-for-innovation-and-entrepreneurship-mlrit/" },
   { label: "X", href: "https://x.com/ciemlrit" },
-  { label: "GitHub", href: "#" },
 ];
 
 /* One entry per sub-event. `spoc` is the student point of contact printed on

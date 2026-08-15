@@ -60,12 +60,48 @@ export const audience = {
 export const marquee = ["Innovation", "Networking", "Building", "Learning"];
 
 export const speakers = [
-  { name: "Speaker One", role: "Chief Technology Officer", instagram: "#", linkedin: "#" },
-  { name: "Speaker Two", role: "Founder & CEO", instagram: "#", linkedin: "#" },
-  { name: "Speaker Three", role: "Principal Engineer", instagram: "#", linkedin: "#" },
-  { name: "Speaker Four", role: "Head of Design", instagram: "#", linkedin: "#" },
-  { name: "Speaker Five", role: "Partner, Seed Fund", instagram: "#", linkedin: "#" },
-  { name: "Speaker Six", role: "Director of Research", instagram: "#", linkedin: "#" },
+  {
+    name: "Speaker One",
+    role: "Chief Technology Officer",
+    image: "/speakers/speaker1.jpg",
+    instagram: "#",
+    linkedin: "#",
+  },
+  {
+    name: "Speaker Two",
+    role: "Founder & CEO",
+    image: "/speakers/speaker2.jpg",
+    instagram: "#",
+    linkedin: "#",
+  },
+  {
+    name: "Speaker Three",
+    role: "Principal Engineer",
+    image: "/speakers/speaker3.jpg",
+    instagram: "#",
+    linkedin: "#",
+  },
+  {
+    name: "Speaker Four",
+    role: "Head of Design",
+    image: "/speakers/speaker4.jpg",
+    instagram: "#",
+    linkedin: "#",
+  },
+  {
+    name: "Speaker Five",
+    role: "Partner, Seed Fund",
+    image: "/speakers/speaker5.jpg",
+    instagram: "#",
+    linkedin: "#",
+  },
+  {
+    name: "Speaker Six",
+    role: "Director of Research",
+    image: "/speakers/speaker6.jpg",
+    instagram: "#",
+    linkedin: "#",
+  },
 ];
 
 export const speakerCount = "20+ Speakers";

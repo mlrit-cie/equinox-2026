@@ -170,82 +170,71 @@ function Speakers() {
         />
       </div>
 
-      {/* scroll-px keeps snapping from eating the container padding */}
-      <ul className="no-scrollbar mt-16 flex snap-x snap-mandatory scroll-px-4 gap-6 overflow-x-auto px-4 pb-4 sm:scroll-px-8 sm:px-8">
-        {speakers.map((speaker, i) => (
-          <li
-            key={speaker.name}
-            className={`w-[280px] shrink-0 snap-start sm:w-[320px] ${
-              i % 2 ? "sm:-mt-10" : ""
-            }`}
-          >
-            <div className="relative">
-              <Avatar
-                name={speaker.name}
-                className="aspect-[4/5] rounded-2xl bg-surface text-6xl"
-              />
-              <div className="label absolute right-3 bottom-3 flex gap-2">
-                <a
-                  href={speaker.instagram}
-                  aria-label={`${speaker.name} on Instagram`}
-                  className="press grid h-9 w-9 place-items-center rounded-lg bg-fg text-ground"
-                >
-                  IG
-                </a>
-                <a
-                  href={speaker.linkedin}
-                  aria-label={`${speaker.name} on LinkedIn`}
-                  className="press grid h-9 w-9 place-items-center rounded-lg bg-fg text-ground"
-                >
-                  in
-                </a>
+      {/* Speaker carousel */}
+      <div className="speaker-carousel mt-16">
+        <div className="speaker-track">
+          {speakers.map((speaker, i) => (
+            <div
+              key={speaker.name}
+              className={`speaker-card ${
+                i === 0 ? "speaker-card-active" : ""
+              }`}
+            >
+              <div className="speaker-image">
+                <Avatar
+                  name={speaker.name}
+                  className="h-full w-full bg-surface text-6xl"
+                />
+
+                <div className="speaker-social">
+                  <a
+                    href={speaker.instagram}
+                    aria-label={`${speaker.name} on Instagram`}
+                  >
+                    IG
+                  </a>
+
+                  <a
+                    href={speaker.linkedin}
+                    aria-label={`${speaker.name} on LinkedIn`}
+                  >
+                    in
+                  </a>
+                </div>
+              </div>
+
+              <div className="speaker-details">
+                <h3 className="heading text-xl">
+                  {speaker.name}
+                </h3>
+
+                <p className="mt-1 text-fg/70">
+                  {speaker.role}
+                </p>
               </div>
             </div>
-            <h3 className="heading mt-4 text-xl">{speaker.name}</h3>
-            <p className="text-fg/70">{speaker.role}</p>
-          </li>
-        ))}
-      </ul>
+          ))}
+        </div>
+      </div>
 
       <div className="mx-auto mt-12 flex max-w-[1400px] items-center gap-6 px-4 sm:px-8">
-        <span className="label whitespace-nowrap text-accent">{speakerCount}</span>
+        <span className="label whitespace-nowrap text-accent">
+          {speakerCount}
+        </span>
+
         <span className="h-px flex-1 bg-fg/20" />
+
         <a
           href="#speakers"
           className="press flex items-center gap-3 whitespace-nowrap"
         >
           See All
+
           <span className="grid h-10 w-10 place-items-center rounded-full bg-fg text-ground">
             <Arrow />
           </span>
         </a>
       </div>
-    </section>
-  );
-}
-
-function Events() {
-  return (
-    <section id="events" className="mx-auto max-w-[1400px] px-4 py-24 sm:px-8">
-      <SectionHeading
-        eyebrow="Events"
-        heading={`${events.length} events across the three days`}
-      />
-      <div className="mt-16 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-        {events.slice(0, 3).map((item) => (
-          <EventCard key={item.slug} event={item} />
-        ))}
-      </div>
-      <Link
-        href="/events"
-        transitionTypes={["nav-forward"]}
-        className="press mt-12 flex w-max items-center gap-3"
-      >
-        See all {events.length} events
-        <span className="grid h-10 w-10 place-items-center rounded-full bg-fg text-ground">
-          <Arrow />
-        </span>
-      </Link>
     </section>
   );
 }

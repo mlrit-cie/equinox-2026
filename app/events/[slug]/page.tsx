@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ViewTransition } from "react";
 import { board, event, events } from "@/lib/content";
 import { Arrow, ContactCard, Eyebrow, PageTransition } from "../../ui";
 
@@ -37,27 +36,21 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
 
   return (
     <PageTransition>
-      {/* Same name as the card on the events grid, so the tile grows into this
-          hero instead of the page blinking over. */}
-      <ViewTransition name={`event-${item.slug}`} share="morph" default="none">
-        <section className="grain relative flex min-h-[70svh] flex-col justify-end overflow-hidden bg-[radial-gradient(120%_55%_at_50%_100%,#4c2a8f_0%,#170f2e_48%,#07060e_100%)] px-4 pt-40 pb-12 sm:px-8">
-          {/* The horizon again, low in the frame — the same device as the home
-              hero so an event page reads as the same world. */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-[#ede9fe] shadow-[0_0_2px_1px_rgba(237,233,254,0.9),0_0_28px_5px_rgba(139,92,246,0.5)]"
-          />
-          <div className="relative mx-auto flex w-full max-w-[1400px] flex-col gap-4">
-            <Eyebrow>
-              {item.category} · {item.day}
-            </Eyebrow>
-            <h1 className="display max-w-4xl text-4xl sm:text-6xl lg:text-7xl">
-              {item.name}
-            </h1>
-            <p className="max-w-2xl text-xl text-fg/75">{item.tagline}</p>
-          </div>
-        </section>
-      </ViewTransition>
+      <section className="grain relative flex min-h-[70svh] flex-col justify-end overflow-hidden bg-[radial-gradient(120%_55%_at_50%_100%,#4c2a8f_0%,#170f2e_48%,#07060e_100%)] px-4 pt-40 pb-12 sm:px-8">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-[#ede9fe] shadow-[0_0_2px_1px_rgba(237,233,254,0.9),0_0_28px_5px_rgba(139,92,246,0.5)]"
+        />
+        <div className="relative mx-auto flex w-full max-w-[1400px] flex-col gap-4">
+          <Eyebrow>
+            {item.category} · {item.day}
+          </Eyebrow>
+          <h1 className="display max-w-4xl text-4xl sm:text-6xl lg:text-7xl">
+            {item.name}
+          </h1>
+          <p className="max-w-2xl text-xl text-fg/75">{item.tagline}</p>
+        </div>
+      </section>
 
       <section className="mx-auto max-w-[1400px] px-4 py-16 sm:px-8">
         <dl className="grid gap-px overflow-hidden rounded-2xl bg-fg/10 sm:grid-cols-2 lg:grid-cols-5">
@@ -97,7 +90,6 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
           <aside className="flex flex-col gap-6">
             <Link
               href="/register"
-              transitionTypes={["nav-forward"]}
               className="flex items-center justify-between rounded-2xl bg-fg px-6 py-5 font-semibold text-ground transition hover:bg-fg/90"
             >
               Register for {item.name}
@@ -125,7 +117,6 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
               ))}
               <Link
                 href="/contact"
-                transitionTypes={["nav-forward"]}
                 className="flex items-center gap-2 text-sm text-accent hover:text-fg"
               >
                 All board contacts
@@ -138,7 +129,6 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
         <div className="mt-20 flex flex-wrap items-center gap-6 border-t border-fg/10 pt-8">
           <Link
             href="/events"
-            transitionTypes={["nav-back"]}
             className="flex items-center gap-3 text-fg/70 hover:text-fg"
           >
             <span className="grid h-10 w-10 place-items-center rounded-full bg-fg/10">

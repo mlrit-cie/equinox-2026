@@ -1,761 +1,730 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Play, Calendar, Trophy, X, MapPin, Download, Share2, Target, Award, Users, Briefcase, Lightbulb, Presentation, Landmark, Compass, TrendingUp, MessageSquare, Megaphone } from "lucide-react"
-import Head from "next/head"
-import LiquidEther from "@/components/LiquidEther"
-import SubEventCarousel from "@/components/SubEventCarousel"
-import ScrollRevealGallery from "@/components/ScrollRevealGallery"
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
+import { EVENTS_DATA, EventItem } from "../data/events";
+import { 
+  Megaphone, Compass, Landmark, MessageSquare, Trophy, Briefcase, 
+  Lightbulb, Users, Target, Presentation, ArrowUpRight, ArrowRight, 
+  Menu, X, Calendar, MapPin, ChevronRight 
+} from "lucide-react";
 
-const hackathonImages = [
-  "Sub-event Photo 1",
-  "Sub-event Photo 2",
-  "Sub-event Photo 3",
-  "Sub-event Photo 4",
-  "Sub-event Photo 5",
-  "Sub-event Photo 6",
-  "Sub-event Photo 7",
-  "Sub-event Photo 8",
-]
+// Map icon names to Lucide icon components
+const iconMap: Record<string, React.ComponentType<any>> = {
+  Megaphone,
+  Compass,
+  Landmark,
+  MessageSquare,
+  Trophy,
+  Briefcase,
+  Lightbulb,
+  Users,
+  Target,
+  Presentation
+};
 
-const partyImages = [
-  "Team Photo 1",
-  "Team Photo 2",
-  "Team Photo 3",
-  "Team Photo 4",
-  "Team Photo 5",
-  "Team Photo 6",
-  "Team Photo 7",
-  "Team Photo 8",
-]
+// Event visual cards color schemes
+const eventThemes = [
+  { bg: "bg-[#FF6B35]", text: "text-white", border: "border-[#FF6B35]" },
+  { bg: "bg-[#240046]", text: "text-white", border: "border-[#240046]" },
+  { bg: "bg-[#0D1B2A]", text: "text-white", border: "border-[#0D1B2A]" },
+  { bg: "bg-[#F7B267]", text: "text-[#0D1B2A]", border: "border-[#F7B267]" },
+  { bg: "bg-[#F15BB5]", text: "text-white", border: "border-[#F15BB5]" }
+];
 
-const sundayImages = [
-  "Faculty Photo 1",
-  "Faculty Photo 2",
-  "Faculty Photo 3",
-  "Faculty Photo 4",
-  "Faculty Photo 5",
-  "Faculty Photo 6",
-]
+export default function Homepage() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [hoveredEvent, setHoveredEvent] = useState<string | null>(null);
 
-const videos = [
-  "Event Highlight Video 1",
-  "Event Highlight Video 2",
-]
+  // Mouse Parallax values for Hero abstract elements
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springConfig = { damping: 25, stiffness: 150 };
+  const parallaxX = useSpring(mouseX, springConfig);
+  const parallaxY = useSpring(mouseY, springConfig);
 
-export default function Equinox2025Event() {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null)
-  const [activeSection, setActiveSection] = useState("fredag")
+  // Scroll animations for Hero Text
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"]
+  });
+  
+  const heroTextY = useTransform(scrollYProgress, [0, 1], [0, 150]);
+  const heroTextScale = useTransform(scrollYProgress, [0, 1], [1, 0.85]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
-  const shareEvent = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: "EQUINOX 2025 - MLR Institute of Technology",
-          text: "Discover EQUINOX 2025, the premier 3-day entrepreneurship summit organized by CIE, MLRIT!",
-          url: window.location.href,
-        })
-      } catch (err) {
-        console.log("Error sharing:", err)
-      }
-    } else {
-      navigator.clipboard.writeText(window.location.href)
-      alert("Link copied to clipboard!")
-    }
-  }
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const { clientX, clientY } = e;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      // Normalise coordinates to -30 to 30
+      const x = (clientX / width - 0.5) * 60;
+      const y = (clientY / height - 0.5) * 60;
+      mouseX.set(x);
+      mouseY.set(y);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [mouseX, mouseY]);
 
   return (
-    <>
-      <Head>
-        <title>EQUINOX 2025 | Centre for Innovation and Entrepreneurship - MLRIT</title>
-        <meta name="description" content="A 3-day entrepreneurship summit where students tackle real-world challenges and ignite their entrepreneurial spirit." />
-      </Head>
-
-      <div className="min-h-screen bg-[#030712] text-[#EAF2FF]">
-        {/* Header - EQUINOX Space Style */}
-        <header className="bg-[#0B132B] border-b border-[#38BDF8]/15 text-[#EAF2FF]" role="banner">
-          <div className="max-w-7xl mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <h1 className="text-2xl font-black tracking-wider text-[#EAF2FF] uppercase">EQUINOX 2025</h1>
-                <div
-                  className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[12px] border-b-[#38BDF8] rotate-90"
-                  aria-hidden="true"
-                ></div>
-                <span className="text-xs font-semibold text-[#8CA3C4] hidden md:inline-block font-mono tracking-wider">CIE, MLR Institute of Technology</span>
-              </div>
-              <div className="flex items-center space-x-6 text-[#8CA3C4] font-mono text-xs">
-                <div className="flex items-center space-x-1">
-                  <MapPin className="w-4 h-4 text-[#38BDF8]" aria-hidden="true" />
-                  <span>MLRIT, Hyderabad</span>
-                </div>
-                <div className="flex items-center space-x-1 text-[#38BDF8]">
-                  <Calendar className="w-4 h-4 text-[#38BDF8]" aria-hidden="true" />
-                  <span>TBD 2025</span>
-                </div>
-                <Button
-                  onClick={shareEvent}
-                  variant="ghost"
-                  size="sm"
-                  className="text-[#EAF2FF] hover:bg-[#38BDF8]/10 hover:text-white"
-                  aria-label="Share event"
-                >
-                  <Share2 className="w-4 h-4 mr-1" />
-                  Share
-                </Button>
-              </div>
-            </div>
+    <div className="min-h-screen bg-[#0D1B2A] text-white overflow-x-hidden selection:bg-[#FF6B35] selection:text-white relative">
+      
+      {/* 1. NAVBAR */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#0D1B2A]/90 backdrop-blur-md border-b border-white/10 paper-grain">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          
+          {/* CIE Branding on Left */}
+          <div className="flex items-center space-x-2">
+            <span className="text-xs font-black tracking-widest text-[#FF6B35] bg-white/5 px-2.5 py-1 rounded border border-[#FF6B35]/20 font-mono">
+              CIE
+            </span>
+            <span className="text-[10px] tracking-wider text-white/50 hidden md:inline-block font-mono uppercase">
+              MLRIT HYDERABAD
+            </span>
           </div>
 
-          {/* Navigation */}
-          <nav className="bg-[#030712] border-t border-b border-[#38BDF8]/10" role="navigation" aria-label="Main Navigation">
-            <div className="max-w-7xl mx-auto px-4 py-2">
-              <ul className="flex space-x-8 text-xs font-mono tracking-widest">
-                <li>
-                  <a
-                    href="#about"
-                    className="text-[#8CA3C4] hover:text-[#7DD3FC] font-medium py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-[#7DD3FC]"
+          {/* EQUINOX Centered Wordmark */}
+          <a href="#" className="text-xl font-black tracking-[0.25em] text-white hover:text-[#FF6B35] transition-colors uppercase font-mono pl-[0.25em]">
+            EQUINOX
+          </a>
+
+          {/* Right Controls */}
+          <div className="flex items-center space-x-6">
+            <a 
+              href="#cta"
+              className="hidden sm:inline-flex items-center justify-center bg-[#FF6B35] text-white px-5 py-2 font-mono text-xs font-bold tracking-widest uppercase hover:bg-white hover:text-[#0D1B2A] border border-transparent hover:border-[#0D1B2A] transition-all transform active:scale-95 duration-200"
+            >
+              REGISTER NOW
+            </a>
+            
+            <button 
+              onClick={() => setIsMenuOpen(true)}
+              aria-label="Open menu"
+              className="flex items-center space-x-2 text-white hover:text-[#FF6B35] transition-colors focus:outline-none"
+            >
+              <span className="font-mono text-xs tracking-widest uppercase hidden md:inline">MENU</span>
+              <Menu className="w-6 h-6" />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* FULLSCREEN MAXIMALIST MENU OVERLAY */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, x: "100%" }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: "100%" }}
+            transition={{ type: "tween", duration: 0.4, ease: [0.76, 0, 0.24, 1] }}
+            className="fixed inset-0 z-[100] bg-[#240046] text-white flex flex-col justify-between p-8 md:p-16 paper-grain"
+          >
+            {/* Overlay Header */}
+            <div className="flex justify-between items-center w-full">
+              <span className="font-mono text-xs tracking-widest uppercase text-white/50">CIE // EQUINOX 2025</span>
+              <button 
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center space-x-2 text-white hover:text-[#FF6B35] transition-colors focus:outline-none"
+                aria-label="Close menu"
+              >
+                <span className="font-mono text-xs tracking-widest uppercase hidden md:inline">CLOSE</span>
+                <X className="w-8 h-8" />
+              </button>
+            </div>
+
+            {/* Menu Links */}
+            <div className="grid md:grid-cols-2 gap-12 items-center my-auto">
+              <nav className="flex flex-col space-y-4 md:space-y-8">
+                {[
+                  { name: "HOME", href: "#" },
+                  { name: "ABOUT", href: "#about" },
+                  { name: "VISION", href: "#vision" },
+                  { name: "EVENTS", href: "#events" },
+                  { name: "SCHEDULE", href: "#schedule" }
+                ].map((item, idx) => (
+                  <a 
+                    key={item.name} 
+                    href={item.href}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="group flex items-center text-4xl md:text-7xl font-black tracking-tight text-white hover:text-[#FF6B35] transition-colors w-fit"
                   >
-                    ABOUT
+                    <span className="text-xs font-mono text-[#FF6B35] mr-4 opacity-50 group-hover:opacity-100 transition-opacity">0{idx + 1}.</span>
+                    {item.name}
+                  </a>
+                ))}
+              </nav>
+
+              {/* Graphic Info Area inside Menu */}
+              <div className="border-t-2 md:border-t-0 md:border-l-2 border-white/20 pt-8 md:pt-0 md:pl-12 flex flex-col justify-between h-full">
+                <div>
+                  <h4 className="text-lg font-bold tracking-tight text-[#F7B267] mb-4 uppercase font-mono">
+                    Organized by:
+                  </h4>
+                  <p className="text-xl font-bold leading-snug max-w-sm mb-8">
+                    Centre for Innovation and Entrepreneurship, MLR Institute of Technology, Hyderabad.
+                  </p>
+                </div>
+                <div className="space-y-4">
+                  <p className="text-xs font-mono tracking-wider text-white/40">TBD 2025 // INVENT. PITCH. COMPETE.</p>
+                  <a 
+                    href="#cta"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="inline-flex items-center space-x-2 text-white hover:text-[#FF6B35] transition-colors group font-mono text-sm font-bold uppercase"
+                  >
+                    <span>Register for the experience</span>
+                    <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Menu Footer */}
+            <div className="flex flex-wrap justify-between items-center gap-4 text-xs font-mono text-white/40 border-t border-white/15 pt-8">
+              <p>© 2025 CIE MLRIT. All Rights Reserved.</p>
+              <div className="flex space-x-6">
+                <a href="#" className="hover:text-white transition-colors">INSTAGRAM</a>
+                <a href="#" className="hover:text-white transition-colors">LINKEDIN</a>
+                <a href="#" className="hover:text-white transition-colors">TWITTER</a>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 2. HERO SECTION */}
+      <section 
+        ref={heroRef}
+        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#0D1B2A] pt-24 px-6 paper-grain"
+      >
+        {/* Halftone grid background texture */}
+        <div className="absolute inset-0 halftone-grid-light opacity-[0.06] pointer-events-none"></div>
+
+        {/* Abstract Graphic Composition with mouse parallax */}
+        <div className="absolute inset-0 pointer-events-none z-10 flex items-center justify-center overflow-hidden">
+          
+          {/* Orbital Orbit Line 1 */}
+          <motion.div 
+            style={{ x: parallaxX, y: parallaxY }}
+            className="absolute w-[600px] h-[600px] border border-white/5 rounded-full"
+          />
+
+          {/* Orbital Orbit Line 2 */}
+          <motion.div 
+            style={{ 
+              x: useTransform(parallaxX, (v) => v * -0.75), 
+              y: useTransform(parallaxY, (v) => v * -0.75) 
+            }}
+            className="absolute w-[800px] h-[800px] border border-[#FF6B35]/5 rounded-full"
+          />
+
+          {/* Solid Graphic Circle - Accent Coral */}
+          <motion.div 
+            style={{ 
+              x: useTransform(parallaxX, (v) => v * 1.5), 
+              y: useTransform(parallaxY, (v) => v * 1.2) 
+            }}
+            className="absolute top-[15%] right-[20%] w-32 h-32 bg-[#FF6B35] opacity-[0.25] rounded-full mix-blend-screen filter blur-md"
+          />
+
+          {/* Solid Graphic Triangle - Accent Violet */}
+          <motion.div 
+            style={{ 
+              x: useTransform(parallaxX, (v) => v * -1.2), 
+              y: useTransform(parallaxY, (v) => v * 1.4) 
+            }}
+            className="absolute bottom-[20%] left-[10%] w-48 h-48 border-l-[4px] border-b-[4px] border-white/10 rotate-12"
+          />
+
+          {/* Graphic Grid Overlay Component */}
+          <motion.div 
+            style={{ 
+              x: useTransform(parallaxX, (v) => v * 0.5), 
+              y: useTransform(parallaxY, (v) => v * -0.5) 
+            }}
+            className="absolute top-[30%] left-[15%] w-24 h-24 halftone-grid opacity-10"
+          />
+        </div>
+
+        {/* Hero Content Container */}
+        <div className="relative max-w-7xl mx-auto w-full z-20 text-center flex flex-col items-center">
+          
+          {/* Top Eyebrow branding */}
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mb-8 flex flex-col items-center"
+          >
+            <span className="text-xs font-mono font-bold tracking-[0.3em] text-[#FF6B35] uppercase mb-2">
+              CIE — Centre for Innovation & Entrepreneurship
+            </span>
+            <span className="text-sm font-mono tracking-widest text-white/50 uppercase">
+              MLR Institute of Technology, Hyderabad
+            </span>
+          </motion.div>
+
+          {/* Giant Oversized Typography Display with Scroll scale/opacity */}
+          <motion.div 
+            style={{ y: heroTextY, scale: heroTextScale, opacity: heroOpacity }}
+            className="mb-10 w-full"
+          >
+            <h1 className="text-7xl sm:text-9xl md:text-[14rem] font-black tracking-tighter leading-none select-none text-white font-mono uppercase relative inline-block">
+              EQUINOX
+              <span className="absolute -bottom-2 right-4 text-xs font-mono tracking-[0.4em] text-[#FF6B35] font-black">
+                2025
+              </span>
+            </h1>
+          </motion.div>
+
+          {/* Subtext description */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="max-w-2xl mx-auto mb-12"
+          >
+            <p className="text-lg md:text-2xl font-mono text-[#F7B267] mb-2 uppercase tracking-wide">
+              3-Day Entrepreneurship Experience
+            </p>
+            <p className="text-white/60 text-sm md:text-base tracking-relaxed">
+              Tackle real-world venture challenges, design high-impact pitch decks, and validate ideas alongside founders and venture capitalists.
+            </p>
+          </motion.div>
+
+          {/* CTA Button Actions */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+            className="flex flex-col sm:flex-row items-center gap-4 justify-center"
+          >
+            <a 
+              href="#cta"
+              className="w-full sm:w-auto bg-[#FF6B35] text-white font-mono text-sm font-bold tracking-widest uppercase px-8 py-4 border-2 border-[#FF6B35] hover:bg-transparent hover:text-[#FF6B35] transition-all transform active:scale-95 duration-200"
+            >
+              Register Now →
+            </a>
+            <a 
+              href="#events"
+              className="w-full sm:w-auto border-2 border-white/20 hover:border-[#FF6B35] text-white hover:text-[#FF6B35] font-mono text-sm font-bold tracking-widest uppercase px-8 py-4 transition-all duration-200"
+            >
+              Explore Events ↓
+            </a>
+          </motion.div>
+
+          {/* Bottom stats banner */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="mt-20 pt-8 border-t border-white/10 w-full max-w-4xl grid grid-cols-3 gap-4 text-center text-xs font-mono uppercase tracking-widest text-white/50"
+          >
+            <div>
+              <p className="text-white font-bold text-lg md:text-2xl font-mono mb-1">3 Days</p>
+              <p className="text-[10px]">Summit Experience</p>
+            </div>
+            <div>
+              <p className="text-[#FF6B35] font-bold text-lg md:text-2xl font-mono mb-1">11</p>
+              <p className="text-[10px]">Experiences</p>
+            </div>
+            <div>
+              <p className="text-[#F7B267] font-bold text-lg md:text-2xl font-mono mb-1">1 Universe</p>
+              <p className="text-[10px]">Entrepreneurial</p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 3. ABOUT EQUINOX */}
+      <section id="about" className="py-32 bg-[#F8F9FA] text-[#0D1B2A] paper-grain relative">
+        <div className="absolute inset-0 halftone-grid opacity-[0.03] pointer-events-none"></div>
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            
+            {/* Left Graphic Grid */}
+            <div className="relative">
+              <span className="text-[10rem] font-black font-mono text-[#0D1B2A]/5 leading-none absolute -top-20 -left-6 select-none">
+                CIE
+              </span>
+              <div className="border-4 border-[#0D1B2A] p-8 relative z-10 bg-white">
+                <span className="font-mono text-xs tracking-widest text-[#FF6B35] uppercase block mb-4">THE BLUEPRINT //</span>
+                <h3 className="text-3xl md:text-5xl font-black font-mono tracking-tight text-[#0D1B2A] uppercase leading-none mb-6">
+                  INVENT. PITCH. COMPETE.
+                </h3>
+                <p className="text-base text-[#0D1B2A]/70 leading-relaxed mb-6">
+                  EQUINOX represents the flagship entrepreneurship festival hosted by the Centre for Innovation and Entrepreneurship (CIE) at MLR Institute of Technology.
+                </p>
+                <div className="border-t border-[#0D1B2A]/10 pt-6 space-y-4">
+                  <div className="flex items-center space-x-3 text-sm font-mono text-[#0D1B2A]">
+                    <span className="w-2.5 h-2.5 bg-[#FF6B35]"></span>
+                    <span>3 Full Days of Experiential Tracks</span>
+                  </div>
+                  <div className="flex items-center space-x-3 text-sm font-mono text-[#0D1B2A]">
+                    <span className="w-2.5 h-2.5 bg-[#240046]"></span>
+                    <span>11 Major Sub-events and Exhibitions</span>
+                  </div>
+                  <div className="flex items-center space-x-3 text-sm font-mono text-[#0D1B2A]">
+                    <span className="w-2.5 h-2.5 bg-[#F15BB5]"></span>
+                    <span>Mentorship by Industry Veterans & VCs</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Copy */}
+            <div>
+              <span className="text-xs font-mono text-[#FF6B35] tracking-widest uppercase block mb-3 font-bold">
+                01 // MENTORSHIP & ACCELERATION
+              </span>
+              <h2 className="text-5xl md:text-7xl font-black font-mono tracking-tighter leading-none mb-8 text-[#0D1B2A] uppercase">
+                WHERE IDEAS MEET ACTION
+              </h2>
+              <p className="text-lg text-[#0D1B2A]/80 leading-relaxed mb-6">
+                Our vision is to create an inclusive and dynamic space where students, early-stage entrepreneurs, and active venture investors converge. At EQUINOX, we believe innovation shouldn't stay confined to slides.
+              </p>
+              <p className="text-base text-[#0D1B2A]/70 leading-relaxed mb-8">
+                Tackle mock market trading challenges, showcase physical prototypes to hundreds of peers, and prepare high-stakes pitches ready for actual angel investment validation.
+              </p>
+              <a 
+                href="#events"
+                className="inline-flex items-center space-x-3 text-xs font-mono font-bold tracking-widest uppercase text-[#0D1B2A] hover:text-[#FF6B35] border-b-2 border-[#0D1B2A] hover:border-[#FF6B35] pb-1 transition-colors"
+              >
+                <span>VIEW EVENT CATALOGUE</span>
+                <ChevronRight className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. VISION SECTION */}
+      <section id="vision" className="py-32 bg-[#240046] text-white paper-grain relative">
+        <div className="absolute inset-0 halftone-grid-light opacity-[0.04] pointer-events-none"></div>
+        <div className="max-w-7xl mx-auto px-6">
+          
+          {/* Large Magazine-spread style statement */}
+          <div className="mb-24 text-center md:text-left">
+            <span className="text-xs font-mono text-[#F7B267] tracking-widest block mb-4 uppercase">
+              02 // CORE OBJECTIVES
+            </span>
+            <h2 className="text-6xl sm:text-8xl md:text-9xl font-black font-mono tracking-tighter leading-none uppercase mb-8 text-white">
+              THINK.<br />
+              BUILD.<br />
+              CONNECT.<br />
+              GROW.
+            </h2>
+            <div className="w-32 h-2 bg-[#FF6B35] mb-8"></div>
+          </div>
+
+          {/* Editorial Grid of Points */}
+          <div className="grid md:grid-cols-3 gap-12 border-t border-white/10 pt-16">
+            <div>
+              <div className="text-4xl font-black font-mono text-[#F7B267] mb-4">01</div>
+              <h3 className="text-xl font-bold tracking-tight text-white mb-3 uppercase font-mono">
+                DISCOVER OPPORTUNITIES
+              </h3>
+              <p className="text-sm text-white/60 leading-relaxed">
+                Connect with E-Cells across major colleges, share insights, and discover startup internships or co-founder vacancies.
+              </p>
+            </div>
+            
+            <div>
+              <div className="text-4xl font-black font-mono text-[#F15BB5] mb-4">02</div>
+              <h3 className="text-xl font-bold tracking-tight text-white mb-3 uppercase font-mono">
+                VALIDATE IN REAL-TIME
+              </h3>
+              <p className="text-sm text-white/60 leading-relaxed">
+                Pitch concept decks to mock boardrooms and run live selling campaigns during peak trade hours.
+              </p>
+            </div>
+
+            <div>
+              <div className="text-4xl font-black font-mono text-[#FF6B35] mb-4">03</div>
+              <h3 className="text-xl font-bold tracking-tight text-white mb-3 uppercase font-mono">
+                SECURE RESOURCES
+              </h3>
+              <p className="text-sm text-white/60 leading-relaxed">
+                Present your minimum viable products to angels, startup incubators, and corporate innovation heads.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. EVENTS EXPLORER */}
+      <section id="events" className="py-32 bg-[#0D1B2A] text-white paper-grain relative">
+        <div className="absolute inset-0 halftone-grid-light opacity-[0.05] pointer-events-none"></div>
+        <div className="max-w-7xl mx-auto px-6">
+          
+          <div className="mb-20 text-center md:text-left">
+            <span className="text-xs font-mono text-[#FF6B35] tracking-widest block mb-2 font-semibold">
+              03 // EXPERIENCE MAP
+            </span>
+            <h2 className="text-5xl md:text-7xl font-black font-mono tracking-tighter leading-none uppercase">
+              EVENTS EXPLORER
+            </h2>
+            <p className="text-sm font-mono text-white/40 mt-3">
+              HOVER A CARD TO DISCOVER UNIQUE GRAPHIC MOTIFS & DETAILS
+            </p>
+          </div>
+
+          {/* Cards Grid */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {EVENTS_DATA.map((item, index) => {
+              const theme = eventThemes[index % eventThemes.length];
+              const Icon = iconMap[item.iconName] || Lightbulb;
+              const isHovered = hoveredEvent === item.id;
+
+              return (
+                <motion.div
+                  key={item.id}
+                  layout
+                  onMouseEnter={() => setHoveredEvent(item.id)}
+                  onMouseLeave={() => setHoveredEvent(null)}
+                  className={`border-2 ${theme.border} p-8 rounded-xl flex flex-col justify-between min-h-[320px] transition-colors relative overflow-hidden group cursor-pointer ${
+                    isHovered ? `${theme.bg} ${theme.text}` : "bg-white/5 text-white"
+                  }`}
+                >
+                  {/* Subtle Background Icon on Hover */}
+                  <div className="absolute right-[-10%] bottom-[-10%] opacity-[0.03] group-hover:opacity-[0.12] transition-opacity duration-300">
+                    <Icon className="w-56 h-56" />
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between items-center mb-8">
+                      <span className={`text-xs font-mono font-bold px-2 py-1 border ${
+                        isHovered ? "border-current" : "border-white/20 text-white/50"
+                      }`}>
+                        {item.category}
+                      </span>
+                      <span className="text-sm font-mono font-black opacity-40">
+                        {item.number}
+                      </span>
+                    </div>
+
+                    <h3 className="text-3xl font-black tracking-tight mb-4 uppercase font-mono leading-none">
+                      {item.title}
+                    </h3>
+                    
+                    <p className={`text-sm leading-relaxed mb-6 ${
+                      isHovered ? "opacity-90" : "text-white/60"
+                    }`}>
+                      {item.desc}
+                    </p>
+                  </div>
+
+                  {/* Expand Reveal Action */}
+                  <div className="pt-4 border-t border-white/10 group-hover:border-white/20 flex items-center justify-between">
+                    <span className="text-xs font-mono font-bold tracking-widest uppercase">
+                      LEARN MORE
+                    </span>
+                    <motion.div
+                      animate={{ x: isHovered ? 5 : 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <ArrowUpRight className="w-5 h-5" />
+                    </motion.div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* 6. SCHEDULE PREVIEW */}
+      <section id="schedule" className="py-32 bg-[#F8F9FA] text-[#0D1B2A] paper-grain relative">
+        <div className="absolute inset-0 halftone-grid opacity-[0.03] pointer-events-none"></div>
+        <div className="max-w-5xl mx-auto px-6">
+          
+          <div className="mb-24 text-center">
+            <span className="text-xs font-mono text-[#FF6B35] tracking-widest block mb-2 font-bold">
+              04 // TIMELINE PREVIEW
+            </span>
+            <h2 className="text-5xl md:text-7xl font-black font-mono tracking-tighter leading-none uppercase mb-4">
+              DAY STRUCTURE
+            </h2>
+            <p className="text-sm font-mono text-[#0D1B2A]/50">
+              *REAL SCHEDULE DATA TO BE LOADED PRE-EVENT
+            </p>
+          </div>
+
+          {/* Timeline columns */}
+          <div className="space-y-12">
+            {[
+              {
+                day: "01",
+                title: "INAUGURATION & SUMMIT OPENING",
+                desc: "Kickstart EQUINOX 2025 at MLRIT Campus. Focuses on peer networking and foundational ideation seminars.",
+                tag: "DAY ONE"
+              },
+              {
+                day: "02",
+                title: "EXPOS & TRADE BATTLES",
+                desc: "Peak trade hours. Startup expos go live, physical MVP demonstrations run, and rival-brand debates occur.",
+                tag: "DAY TWO"
+              },
+              {
+                day: "03",
+                title: "BOARDROOM PITCHE DECK & VALEDICTORY",
+                desc: "High-stakes presentation formats. Pitches to actual investor groups followed by award announcements.",
+                tag: "DAY THREE"
+              }
+            ].map((item, idx) => (
+              <div 
+                key={item.day} 
+                className="grid md:grid-cols-4 gap-8 items-start pb-12 border-b border-[#0D1B2A]/10 last:border-0"
+              >
+                <div className="text-center md:text-left">
+                  <span className="text-6xl md:text-8xl font-black font-mono leading-none tracking-tighter text-[#0D1B2A]">
+                    {item.day}
+                  </span>
+                  <span className="block text-xs font-mono text-[#FF6B35] uppercase font-bold tracking-wider mt-1">
+                    {item.tag}
+                  </span>
+                </div>
+                
+                <div className="md:col-span-3">
+                  <h3 className="text-xl md:text-3xl font-black tracking-tight text-[#0D1B2A] uppercase mb-3 font-mono">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm md:text-base text-[#0D1B2A]/70 leading-relaxed mb-6">
+                    {item.desc}
+                  </p>
+                  
+                  {/* Clearly Marked Placeholders for Times */}
+                  <div className="flex flex-wrap gap-3">
+                    <span className="px-3 py-1 font-mono text-[10px] font-bold border border-[#0D1B2A]/20 bg-[#0D1B2A]/5 uppercase">
+                      TBD - MORNING TRACK
+                    </span>
+                    <span className="px-3 py-1 font-mono text-[10px] font-bold border border-[#0D1B2A]/20 bg-[#0D1B2A]/5 uppercase">
+                      TBD - AFTERNOON CHALLENGES
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 7. CTA SECTION */}
+      <section id="cta" className="py-36 bg-[#240046] text-white paper-grain relative overflow-hidden">
+        <div className="absolute inset-0 halftone-grid-light opacity-[0.05] pointer-events-none"></div>
+
+        {/* Abstract Graphic Background Shapes */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] border-[2px] border-white/5 rounded-full rotate-45"></div>
+          <div className="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] border-l-[3px] border-[#FF6B35]/15 rotate-12"></div>
+        </div>
+
+        <div className="relative max-w-4xl mx-auto px-6 text-center z-10">
+          <span className="text-xs font-mono text-[#F7B267] tracking-widest block mb-4 uppercase font-bold">
+            GET INVOLVED // CIE ACCELERATOR
+          </span>
+          <h2 className="text-5xl sm:text-7xl md:text-8xl font-black font-mono tracking-tighter leading-none uppercase mb-10">
+            READY TO MAKE YOUR MOVE?
+          </h2>
+          <p className="text-sm md:text-lg text-white/70 max-w-2xl mx-auto leading-relaxed mb-12">
+            Accelerate your concept, display innovations to peer groups, and get access to incubator support at MLRIT.
+          </p>
+
+          <a 
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              alert("Incubation registration placeholders are active!");
+            }}
+            className="inline-flex items-center space-x-3 bg-[#FF6B35] text-white font-mono text-sm font-bold tracking-widest uppercase px-10 py-5 border-2 border-[#FF6B35] hover:bg-transparent hover:text-white transition-all transform active:scale-95 duration-200"
+          >
+            <span>Register for EQUINOX →</span>
+          </a>
+        </div>
+      </section>
+
+      {/* 8. FOOTER */}
+      <footer className="bg-[#0D1B2A] text-white py-24 border-t border-white/10 paper-grain relative">
+        <div className="absolute inset-0 halftone-grid-light opacity-[0.03] pointer-events-none"></div>
+        
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
+            
+            {/* Branding Column */}
+            <div className="lg:col-span-2">
+              <span className="text-xs font-mono text-[#FF6B35] tracking-widest block mb-2 font-bold">
+                CIE // CENTRE FOR INNOVATION & ENTREPRENEURSHIP
+              </span>
+              <p className="text-lg font-bold leading-snug max-w-sm text-white/80 font-mono uppercase mb-6">
+                MLR Institute of Technology, Dundigal, Hyderabad.
+              </p>
+              <div className="flex space-x-4">
+                <Calendar className="w-5 h-5 text-white/50" />
+                <span className="text-xs font-mono text-white/50 uppercase tracking-widest">TBD 2025 // HYDERABAD</span>
+              </div>
+            </div>
+
+            {/* Links Column 1 */}
+            <div>
+              <h4 className="text-xs font-mono tracking-widest text-[#F7B267] uppercase mb-4 font-bold">
+                NAVIGATION
+              </h4>
+              <ul className="space-y-2 text-sm font-mono text-white/60">
+                <li><a href="#" className="hover:text-[#FF6B35] transition-colors">HOME</a></li>
+                <li><a href="#about" className="hover:text-[#FF6B35] transition-colors">ABOUT</a></li>
+                <li><a href="#vision" className="hover:text-[#FF6B35] transition-colors">VISION</a></li>
+                <li><a href="#events" className="hover:text-[#FF6B35] transition-colors">EVENTS</a></li>
+                <li><a href="#schedule" className="hover:text-[#FF6B35] transition-colors">SCHEDULE</a></li>
+              </ul>
+            </div>
+
+            {/* Links Column 2 */}
+            <div>
+              <h4 className="text-xs font-mono tracking-widest text-[#F15BB5] uppercase mb-4 font-bold">
+                RESOURCES
+              </h4>
+              <ul className="space-y-2 text-sm font-mono text-white/60">
+                <li>
+                  <a 
+                    onClick={() => alert("Guidelines placeholder active.")}
+                    className="hover:text-[#FF6B35] transition-colors cursor-pointer"
+                  >
+                    GUIDELINES
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="#sub-events"
-                    className="text-[#8CA3C4] hover:text-[#7DD3FC] font-medium py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-[#7DD3FC]"
+                  <a 
+                    onClick={() => alert("Code of conduct placeholder.")}
+                    className="hover:text-[#FF6B35] transition-colors cursor-pointer"
                   >
-                    SUB-EVENTS
+                    CODE OF CONDUCT
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="#program"
-                    className="text-[#8CA3C4] hover:text-[#7DD3FC] font-medium py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-[#7DD3FC]"
+                  <a 
+                    onClick={() => alert("Contact support active.")}
+                    className="hover:text-[#FF6B35] transition-colors cursor-pointer"
                   >
-                    SCHEDULE
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#bilder"
-                    className="text-[#8CA3C4] hover:text-[#7DD3FC] font-medium py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-[#7DD3FC]"
-                  >
-                    GALLERY
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#coordinators"
-                    className="text-[#8CA3C4] hover:text-[#7DD3FC] font-medium py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-[#7DD3FC]"
-                  >
-                    COORDINATORS
+                    CONTACT SUPPORT
                   </a>
                 </li>
               </ul>
             </div>
-          </nav>
-        </header>
 
-        {/* Hero Section - LiquidEther Interactive Background */}
-        <section
-          className="relative min-h-[600px] flex items-center overflow-hidden bg-[#050A14] border-b border-[#38BDF8]/10"
-          role="main"
-        >
-          {/* LiquidEther background wrapper */}
-          <div className="absolute inset-0 z-0 opacity-75">
-            <LiquidEther
-              colors={['#2563EB', '#38BDF8', '#7DD3FC']}
-              mouseForce={20}
-              cursorSize={110}
-              isViscous={false}
-              viscous={30}
-              iterationsViscous={32}
-              iterationsPoisson={27}
-              resolution={0.5}
-              isBounce
-              autoDemo={true}
-              autoSpeed={0.4}
-              autoIntensity={2.2}
-              takeoverDuration={0.25}
-              autoResumeDelay={3000}
-              autoRampDuration={0.6}
-            />
           </div>
 
-          <div className="max-w-7xl mx-auto px-4 py-16 relative z-10 w-full">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <span className="text-xs font-mono text-[#38BDF8] uppercase tracking-widest block mb-2 font-semibold">
-                  TBD 2025 // MLRIT CIE
-                </span>
-                <h2 className="text-7xl font-extrabold text-[#EAF2FF] leading-none mb-4 tracking-tighter uppercase bg-clip-text text-transparent bg-gradient-to-r from-[#EAF2FF] via-[#7DD3FC] to-[#38BDF8]">
-                  EQUINOX 2025
-                </h2>
-                <p className="text-xl font-mono text-[#7DD3FC] mb-4">Innovate. Pitch. Compete.</p>
-                <p className="text-lg text-[#8CA3C4] mb-8 max-w-lg leading-relaxed">
-                  A 3-day event where students tackle real-world challenges and ignite their entrepreneurial spirit. Organized by Centre for Innovation and Entrepreneurship (CIE), MLRIT.
-                </p>
-                <div className="flex flex-wrap gap-4">
-                  <Button className="bg-gradient-to-r from-[#2563EB] to-[#38BDF8] hover:shadow-[0_0_25px_rgba(56,189,248,0.5)] text-white font-bold text-lg px-6 py-3 rounded-md transition-all duration-300 border-none transform active:scale-95">
-                    Register Interest
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="border-[#8CA3C4]/30 text-[#EAF2FF] hover:bg-[#EAF2FF]/5 hover:border-white font-bold text-lg px-6 py-3 rounded-md transition-all duration-200"
-                  >
-                    Get Details
-                  </Button>
-                </div>
-              </div>
-              <div className="relative h-[420px] w-full max-w-[440px] mx-auto flex items-center justify-center">
-                {/* Background glow sphere */}
-                <div className="absolute w-72 h-72 bg-[#2563EB]/15 rounded-full filter blur-3xl pointer-events-none"></div>
-
-                {/* Sub-Card 1 (Left Offset) */}
-                <div className="absolute left-2 top-8 w-40 h-40 bg-[#0B132B]/80 border border-[#2563EB]/35 backdrop-blur-sm rounded-xl p-4 shadow-xl -rotate-6 transform hover:rotate-0 hover:z-20 transition-all duration-300 flex flex-col justify-between select-none">
-                  <span className="text-[10px] font-mono text-[#38BDF8]">[Image]</span>
-                  <span className="text-xs font-bold text-[#EAF2FF]">IPL Auction</span>
-                  <span className="text-[9px] text-[#8CA3C4]">Bidding Strategy</span>
-                </div>
-
-                {/* Sub-Card 2 (Right Offset) */}
-                <div className="absolute right-2 bottom-8 w-40 h-40 bg-[#0B132B]/80 border border-[#2563EB]/35 backdrop-blur-sm rounded-xl p-4 shadow-xl rotate-6 transform hover:rotate-0 hover:z-20 transition-all duration-300 flex flex-col justify-between select-none">
-                  <span className="text-[10px] font-mono text-[#38BDF8]">[Image]</span>
-                  <span className="text-xs font-bold text-[#EAF2FF]">Ideathon Arena</span>
-                  <span className="text-[9px] text-[#8CA3C4]">Pitch to VCs</span>
-                </div>
-
-                {/* Main Featured Card (Centered & Elevated) */}
-                <div className="absolute z-10 w-60 h-60 bg-[#0B1526] border-2 border-[#38BDF8] rounded-2xl p-6 shadow-2xl flex flex-col justify-between transform hover:scale-105 transition-all duration-300 shadow-[0_0_30px_rgba(56,189,248,0.2)] select-none">
-                  <div>
-                    <span className="text-xs font-mono text-[#38BDF8] block mb-1">[Main Showcase]</span>
-                    <h3 className="text-lg font-bold text-[#EAF2FF] tracking-tight">Venture Pitches</h3>
-                  </div>
-                  <div className="w-full h-24 border border-[#38BDF8]/10 rounded-lg flex items-center justify-center bg-[#050A14] text-[10px] text-[#8CA3C4] font-mono">
-                    [Image Placeholder]
-                  </div>
-                  <span className="text-[10px] text-[#8CA3C4]/60 font-mono">EQUINOX 2025 MLRIT</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* About Section */}
-        <section id="about" className="py-16 bg-[#0B1526]/40 border-b border-[#38BDF8]/10" aria-labelledby="about-heading">
-          <div className="max-w-4xl mx-auto px-4 text-center">
-            <h2 id="about-heading" className="text-xs font-mono text-[#7DD3FC] uppercase tracking-widest mb-3">Our Vision</h2>
-            <h3 className="text-3xl font-bold text-[#EAF2FF] mb-6">About EQUINOX</h3>
-            <p className="text-xl text-[#8CA3C4] leading-relaxed">
-              We envision creating an inclusive space where students, entrepreneurs, and investors come together to collaborate, learn, and shape impactful ideas.
-            </p>
-          </div>
-        </section>
-
-        {/* Event Stats - Full Bleed Strip */}
-        <section className="bg-gradient-to-r from-[#030712] via-[#0B132B] to-[#030712] border-y border-[#38BDF8]/10 py-12 relative overflow-hidden" aria-labelledby="stats-heading">
-          <div className="absolute inset-0 opacity-5 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
-          <div className="max-w-6xl mx-auto px-4 relative z-10">
-            <h2 id="stats-heading" className="sr-only">Event Stats</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 divide-y md:divide-y-0 md:divide-x divide-[#38BDF8]/10">
-              <div className="text-center px-4">
-                <div className="text-5xl font-black text-[#7DD3FC] tracking-tight mb-1">3 Days</div>
-                <div className="text-[#8CA3C4] font-mono text-[10px] uppercase tracking-widest">Summit & Challenges</div>
-              </div>
-              <div className="text-center px-4 pt-4 md:pt-0">
-                <div className="text-5xl font-black text-[#EAF2FF] tracking-tight mb-1">1000+</div>
-                <div className="text-[#8CA3C4] font-mono text-[10px] uppercase tracking-widest">Participants</div>
-              </div>
-              <div className="text-center px-4 pt-4 md:pt-0">
-                <div className="text-5xl font-black text-[#7DD3FC] tracking-tight mb-1">11</div>
-                <div className="text-[#8CA3C4] font-mono text-[10px] uppercase tracking-widest">Sub-Events</div>
-              </div>
-              <div className="text-center px-4 pt-4 md:pt-0">
-                <div className="text-5xl font-black text-[#EAF2FF] tracking-tight mb-1">₹ Lakhs</div>
-                <div className="text-[#8CA3C4] font-mono text-[10px] uppercase tracking-widest">Prize Pool & VC</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Program / Schedule Section */}
-        <section id="program" className="py-24 bg-[#030712] border-b border-[#38BDF8]/10 relative overflow-hidden" aria-labelledby="program-heading">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-[#2563EB]/5 rounded-full filter blur-3xl pointer-events-none"></div>
-          <div className="max-w-5xl mx-auto px-4 relative z-10">
-            <span className="text-xs font-mono text-[#38BDF8] tracking-widest text-center block mb-2 font-semibold">TBD 2025 // HYDERABAD</span>
-            <h2 id="program-heading" className="text-4xl font-extrabold text-[#EAF2FF] mb-2 text-center tracking-tight uppercase">
-              EVENT SCHEDULE
+          {/* Massive Wordmark */}
+          <div className="border-t border-white/10 pt-16 text-center overflow-hidden">
+            <h2 className="text-[12vw] font-black font-mono leading-none tracking-[0.2em] text-white/5 select-none uppercase pl-[0.2em]">
+              EQUINOX
             </h2>
-            <p className="text-sm font-mono text-[#8CA3C4] text-center mb-16">THREE DAYS OF ENTREPRENEURIAL EXCELLENCE</p>
-
-            <div className="relative">
-              {/* Vertical Glowing Connector Line */}
-              <div className="absolute left-[50%] top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#2563EB] via-[#38BDF8] to-transparent transform -translate-x-[50%] hidden md:block opacity-35"></div>
-
-              {/* Day 1 (Left Text, Right Card) */}
-              <div className="relative grid md:grid-cols-2 gap-8 mb-16 items-center">
-                <div className="md:text-right pr-8 md:block flex flex-col md:items-end">
-                  <span className="px-2.5 py-1 text-[10px] font-mono text-[#38BDF8] border border-[#38BDF8]/20 bg-[#38BDF8]/10 rounded-md mb-3 block w-fit">DAY 1</span>
-                  <h3 className="text-2xl font-bold text-[#EAF2FF] mb-2 tracking-tight">Inauguration & Networking</h3>
-                  <p className="text-sm text-[#8CA3C4] max-w-sm md:text-right leading-relaxed">
-                    Set up your workspace, check in at MLRIT Campus, and engage in startup foundations seminars.
-                  </p>
-                </div>
-                <div className="relative bg-[#0B132B] border border-[#2563EB]/15 rounded-xl p-6 shadow-xl hover:border-[#38BDF8]/40 transition-colors">
-                  {/* Glowing timeline node */}
-                  <div className="absolute left-[-17px] top-[50%] w-8 h-8 rounded-full bg-[#030712] border-2 border-[#38BDF8] hidden md:flex items-center justify-center transform -translate-y-[50%] z-10 shadow-[0_0_15px_rgba(56,189,248,0.35)]">
-                    <div className="w-3 h-3 rounded-full bg-[#38BDF8]"></div>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="flex items-start space-x-3 border-l-2 border-[#2563EB]/35 pl-4 py-0.5">
-                      <time className="text-[#38BDF8] font-bold font-mono text-sm min-w-[70px]">09:00 AM</time>
-                      <div>
-                        <p className="font-bold text-[#EAF2FF] text-sm">Registrations Open</p>
-                        <p className="text-xs text-[#8CA3C4]">MLRIT CIE Lobby</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3 border-l-2 border-[#2563EB]/35 pl-4 py-0.5">
-                      <time className="text-[#38BDF8] font-bold font-mono text-sm min-w-[70px]">10:00 AM</time>
-                      <div>
-                        <p className="font-bold text-[#EAF2FF] text-sm">Opening Ceremony</p>
-                        <p className="text-xs text-[#8CA3C4]">MLRIT Main Auditorium</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3 border-l-2 border-[#2563EB]/35 pl-4 py-0.5">
-                      <time className="text-[#38BDF8] font-bold font-mono text-sm min-w-[70px]">11:30 AM</time>
-                      <div>
-                        <p className="font-bold text-[#EAF2FF] text-sm">Spotlight (Expert Talks)</p>
-                        <p className="text-xs text-[#8CA3C4]">Seminars on Startup Foundations</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3 border-l-2 border-[#2563EB]/35 pl-4 py-0.5">
-                      <time className="text-[#38BDF8] font-bold font-mono text-sm min-w-[70px]">02:00 PM</time>
-                      <div>
-                        <p className="font-bold text-[#EAF2FF] text-sm">E-Cell Meet</p>
-                        <p className="text-xs text-[#8CA3C4]">Networking & Collaboration Rooms</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3 border-l-2 border-[#2563EB]/35 pl-4 py-0.5">
-                      <time className="text-[#38BDF8] font-bold font-mono text-sm min-w-[70px]">03:30 PM</time>
-                      <div>
-                        <p className="font-bold text-[#EAF2FF] text-sm">Crossroads Briefing</p>
-                        <p className="text-xs text-[#8CA3C4]">CEO/CTO Simulation Kickoff</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Day 2 (Left Card, Right Text) */}
-              <div className="relative grid md:grid-cols-2 gap-8 mb-16 items-center">
-                <div className="relative bg-[#0B132B] border border-[#38BDF8]/15 rounded-xl p-6 shadow-xl hover:border-[#38BDF8]/40 transition-colors order-2 md:order-1">
-                  {/* Glowing timeline node */}
-                  <div className="absolute right-[-17px] top-[50%] w-8 h-8 rounded-full bg-[#030712] border-2 border-[#38BDF8] hidden md:flex items-center justify-center transform -translate-y-[50%] z-10 shadow-[0_0_15px_rgba(56,189,248,0.35)]">
-                    <div className="w-3 h-3 rounded-full bg-[#38BDF8]"></div>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="flex items-start space-x-3 border-l-2 border-[#38BDF8]/35 pl-4 py-0.5">
-                      <time className="text-[#38BDF8] font-bold font-mono text-sm min-w-[70px]">09:30 AM</time>
-                      <div>
-                        <p className="font-bold text-[#EAF2FF] text-sm">Startup Expo</p>
-                        <p className="text-xs text-[#8CA3C4]">Product Showcases & Exhibitions</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3 border-l-2 border-[#38BDF8]/35 pl-4 py-0.5">
-                      <time className="text-[#38BDF8] font-bold font-mono text-sm min-w-[70px]">11:00 AM</time>
-                      <div>
-                        <p className="font-bold text-[#EAF2FF] text-sm">Hustle Mania Stalls Open</p>
-                        <p className="text-xs text-[#8CA3C4]">Live Trade & Real Selling Challenge</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3 border-l-2 border-[#38BDF8]/35 pl-4 py-0.5">
-                      <time className="text-[#38BDF8] font-bold font-mono text-sm min-w-[70px]">02:00 PM</time>
-                      <div>
-                        <p className="font-bold text-[#EAF2FF] text-sm">IPL Auction Room</p>
-                        <p className="text-xs text-[#8CA3C4]">Bidding & Strategy Bidding Rooms</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3 border-l-2 border-[#38BDF8]/35 pl-4 py-0.5">
-                      <time className="text-[#38BDF8] font-bold font-mono text-sm min-w-[70px]">03:30 PM</time>
-                      <div>
-                        <p className="font-bold text-[#EAF2FF] text-sm">Brand Battles & Poly</p>
-                        <p className="text-xs text-[#8CA3C4]">Rival-brand Debate & Strategy Game</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="pl-8 order-1 md:order-2">
-                  <span className="px-2.5 py-1 text-[10px] font-mono text-[#38BDF8] border border-[#38BDF8]/20 bg-[#38BDF8]/10 rounded-md mb-3 block w-fit">DAY 2</span>
-                  <h3 className="text-2xl font-bold text-[#EAF2FF] mb-2 tracking-tight">Expos & Trade Action</h3>
-                  <p className="text-sm text-[#8CA3C4] max-w-sm leading-relaxed">
-                    Pitch to campus crowds at Startup Expo, trade mock products, and enter strategy board game challenges.
-                  </p>
-                </div>
-              </div>
-
-              {/* Day 3 (Left Text, Right Card) */}
-              <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:text-right pr-8 md:block flex flex-col md:items-end">
-                  <span className="px-2.5 py-1 text-[10px] font-mono text-[#38BDF8] border border-[#38BDF8]/20 bg-[#38BDF8]/10 rounded-md mb-3 block w-fit">DAY 3</span>
-                  <h3 className="text-2xl font-bold text-[#EAF2FF] mb-2 tracking-tight">Pitches & Recruitment</h3>
-                  <p className="text-sm text-[#8CA3C4] max-w-sm md:text-right leading-relaxed">
-                    Present structured pitch decks to actual venture capital judges, and recruit top-tier college talents.
-                  </p>
-                </div>
-                <div className="relative bg-[#0B132B] border border-[#2563EB]/15 rounded-xl p-6 shadow-xl hover:border-[#38BDF8]/40 transition-colors">
-                  {/* Glowing timeline node */}
-                  <div className="absolute left-[-17px] top-[50%] w-8 h-8 rounded-full bg-[#030712] border-2 border-[#38BDF8] hidden md:flex items-center justify-center transform -translate-y-[50%] z-10 shadow-[0_0_15px_rgba(56,189,248,0.35)]">
-                    <div className="w-3 h-3 rounded-full bg-[#38BDF8]"></div>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="flex items-start space-x-3 border-l-2 border-[#2563EB]/35 pl-4 py-0.5">
-                      <time className="text-[#38BDF8] font-bold font-mono text-sm min-w-[70px]">09:00 AM</time>
-                      <div>
-                        <p className="font-bold text-[#EAF2FF] text-sm">Internship Recruitment</p>
-                        <p className="text-xs text-[#8CA3C4]">Startup Recruiting & Interviews</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3 border-l-2 border-[#2563EB]/35 pl-4 py-0.5">
-                      <time className="text-[#38BDF8] font-bold font-mono text-sm min-w-[70px]">10:30 AM</time>
-                      <div>
-                        <p className="font-bold text-[#EAF2FF] text-sm">Pitch Deck Presentations</p>
-                        <p className="text-xs text-[#8CA3C4]">Investor Pitches & Mock Rounds</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3 border-l-2 border-[#2563EB]/35 pl-4 py-0.5">
-                      <time className="text-[#38BDF8] font-bold font-mono text-sm min-w-[70px]">01:30 PM</time>
-                      <div>
-                        <p className="font-bold text-[#EAF2FF] text-sm">Ideathon Stage VCs</p>
-                        <p className="text-xs text-[#8CA3C4]">Pitching Finalists showcase</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3 border-l-2 border-[#2563EB]/35 pl-4 py-0.5">
-                      <time className="text-[#38BDF8] font-bold font-mono text-sm min-w-[70px]">03:30 PM</time>
-                      <div>
-                        <p className="font-bold text-[#EAF2FF] text-sm">Valedictory & Awards</p>
-                        <p className="text-xs text-[#8CA3C4]">CIE MLRIT Main Hall</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
-        </section>
+        </div>
+      </footer>
 
-        {/* Sub-Events Section */}
-        <section id="sub-events" className="py-16 bg-[#050A14] border-b border-[#38BDF8]/10" aria-labelledby="sub-events-heading">
-          <div className="max-w-6xl mx-auto px-4">
-            <span className="text-xs font-mono text-[#38BDF8] tracking-widest text-center block mb-2 font-semibold">THE HEART OF EQUINOX 2025</span>
-            <h2 id="sub-events-heading" className="text-5xl font-extrabold text-[#EAF2FF] mb-8 text-center tracking-tighter uppercase bg-clip-text text-transparent bg-gradient-to-r from-[#EAF2FF] via-[#7DD3FC] to-[#38BDF8]">
-              11 MAJOR SUB-EVENTS
-            </h2>
-
-            <SubEventCarousel
-              events={[
-                {
-                  title: "Spotlight",
-                  desc: "Expert talks from industry pioneers and veteran entrepreneurs.",
-                  icon: Megaphone,
-                },
-                {
-                  title: "Crossroads",
-                  desc: "A premium CEO/CTO business simulation and strategy challenge.",
-                  icon: Compass,
-                },
-                {
-                  title: "Startup Expo",
-                  desc: "A platform for product showcases and startup exhibitions.",
-                  icon: Landmark,
-                },
-                {
-                  title: "Brand Battles",
-                  desc: "A fierce rival-brand debate and marketing strategy battle.",
-                  icon: MessageSquare,
-                },
-                {
-                  title: "IPL Auction",
-                  desc: "A thrilling cricket-draft bidding and strategy challenge.",
-                  icon: Trophy,
-                },
-                {
-                  title: "Hustle Mania",
-                  desc: "A live selling and trade stall execution challenge.",
-                  icon: Briefcase,
-                },
-                {
-                  title: "Ideathon",
-                  desc: "A structured pitch of innovative ideas to venture capitalists.",
-                  icon: Lightbulb,
-                },
-                {
-                  title: "Internship Drive",
-                  desc: "Startup recruitment drive for top-tier internships.",
-                  icon: Users,
-                },
-                {
-                  title: "Startup Poly",
-                  desc: "A Monopoly-style board game challenge focused on business strategy.",
-                  icon: Target,
-                },
-                {
-                  title: "E-Cell Meet",
-                  desc: "A collaborative networking meet for E-Cells across multiple colleges.",
-                  icon: Users,
-                },
-                {
-                  title: "Pitch Deck",
-                  desc: "A structured, high-stakes investor pitch deck presentation.",
-                  icon: Presentation,
-                },
-              ]}
-            />
-          </div>
-        </section>
-
-        {/* Gallery Section */}
-        <section id="bilder" className="bg-[#0B1526]/30 py-16 border-b border-[#38BDF8]/10" aria-labelledby="gallery-heading">
-          <div className="max-w-7xl mx-auto px-4">
-            <h2 id="gallery-heading" className="text-4xl font-black text-[#EAF2FF] text-center mb-2 tracking-tight">
-              EQUINOX GALLERY
-            </h2>
-            <p className="text-sm font-mono text-[#38BDF8] text-center mb-12">REPLAYING THE HIGHLIGHTS</p>
-
-            {/* Gallery Navigation */}
-            <nav className="flex justify-center mb-8" aria-label="Gallery Category Selection">
-              <div className="bg-[#0B1526] border border-[#2563EB]/20 rounded-md p-1 shadow-lg flex flex-wrap gap-1">
-                <Button
-                  variant={activeSection === "fredag" ? "default" : "ghost"}
-                  className={`font-mono font-bold text-xs ${
-                    activeSection === "fredag"
-                      ? "bg-[#2563EB] text-white"
-                      : "text-[#8CA3C4] hover:text-[#7DD3FC] hover:bg-[#050A14]"
-                  }`}
-                  onClick={() => setActiveSection("fredag")}
-                  aria-pressed={activeSection === "fredag"}
-                >
-                  SUB-EVENTS
-                </Button>
-                <Button
-                  variant={activeSection === "lordag" ? "default" : "ghost"}
-                  className={`font-mono font-bold text-xs ${
-                    activeSection === "lordag"
-                      ? "bg-[#2563EB] text-white"
-                      : "text-[#8CA3C4] hover:text-[#7DD3FC] hover:bg-[#050A14]"
-                  }`}
-                  onClick={() => setActiveSection("lordag")}
-                  aria-pressed={activeSection === "lordag"}
-                >
-                  TEAM LABS
-                </Button>
-                <Button
-                  variant={activeSection === "sondag" ? "default" : "ghost"}
-                  className={`font-mono font-bold text-xs ${
-                    activeSection === "sondag"
-                      ? "bg-[#2563EB] text-white"
-                      : "text-[#8CA3C4] hover:text-[#7DD3FC] hover:bg-[#050A14]"
-                  }`}
-                  onClick={() => setActiveSection("sondag")}
-                  aria-pressed={activeSection === "sondag"}
-                >
-                  FACULTY LABS
-                </Button>
-                <Button
-                  variant={activeSection === "videos" ? "default" : "ghost"}
-                  className={`font-mono font-bold text-xs ${
-                    activeSection === "videos"
-                      ? "bg-[#2563EB] text-white"
-                      : "text-[#8CA3C4] hover:text-[#7DD3FC] hover:bg-[#050A14]"
-                  }`}
-                  onClick={() => setActiveSection("videos")}
-                  aria-pressed={activeSection === "videos"}
-                >
-                  CLIPS
-                </Button>
-              </div>
-            </nav>
-
-            {/* Image Gallery */}
-            {activeSection === "fredag" && (
-              <ScrollRevealGallery
-                category="Sub-events"
-                items={hackathonImages}
-                onSelectImage={setSelectedImage}
-              />
-            )}
-
-            {activeSection === "lordag" && (
-              <ScrollRevealGallery
-                category="Team Labs"
-                items={partyImages}
-                onSelectImage={setSelectedImage}
-              />
-            )}
-
-            {activeSection === "sondag" && (
-              <ScrollRevealGallery
-                category="Faculty Labs"
-                items={sundayImages}
-                onSelectImage={setSelectedImage}
-              />
-            )}
-
-            {activeSection === "videos" && (
-              <ScrollRevealGallery
-                category="Clips"
-                items={videos}
-                onSelectImage={setSelectedImage}
-              />
-            )}
-          </div>
-        </section>
-
-        {/* Faculty Coordinators Section */}
-        <section id="coordinators" className="bg-[#0B132B]/40 py-24 text-[#EAF2FF] border-b border-[#38BDF8]/10" aria-labelledby="coordinators-heading">
-          <div className="max-w-6xl mx-auto px-4">
-            <span className="text-xs font-mono text-[#38BDF8] tracking-widest text-center block mb-2 font-semibold">FACULTY LEADERSHIP</span>
-            <h2 id="coordinators-heading" className="text-4xl font-extrabold text-[#EAF2FF] mb-2 text-center tracking-tight uppercase">
-              FACULTY COORDINATORS
-            </h2>
-            <p className="text-sm font-mono text-[#8CA3C4] text-center mb-16">MLRIT CENTRE FOR INNOVATION AND ENTREPRENEURSHIP</p>
-
-            <div className="grid md:grid-cols-3 gap-8 items-start md:pb-12">
-              <article className="bg-[#050A14]/85 border border-[#2563EB]/15 rounded-2xl p-6 hover:border-[#38BDF8]/40 transition-all duration-300 hover:shadow-[0_10px_30px_rgba(56,189,248,0.08)] flex flex-col justify-between h-full">
-                <div className="w-full aspect-[3/4] border border-[#38BDF8]/15 bg-[#0B1526] rounded-xl flex flex-col items-center justify-center mb-6 text-[#8CA3C4] shadow-inner relative overflow-hidden">
-                  <span className="text-xs font-mono text-[#38BDF8]/70">[Photo Placeholder]</span>
-                  <span className="text-[10px] font-mono text-[#8CA3C4]/60 mt-1">Dr. A. Kiran Kumar</span>
-                </div>
-                <div>
-                  <span className="px-2.5 py-1 text-xs font-mono font-bold tracking-wider text-[#38BDF8] border border-[#38BDF8]/20 bg-[#38BDF8]/10 rounded-md inline-block mb-3">Director, CIE</span>
-                  <h3 className="text-xl font-bold mb-1 text-[#EAF2FF]">Dr. A. Kiran Kumar</h3>
-                  <p className="text-xs text-[#8CA3C4] font-mono">MLR Institute of Technology</p>
-                </div>
-              </article>
-
-              <article className="bg-[#050A14]/85 border border-[#2563EB]/15 rounded-2xl p-6 hover:border-[#38BDF8]/40 transition-all duration-300 hover:shadow-[0_10px_30px_rgba(56,189,248,0.08)] flex flex-col justify-between h-full md:translate-y-6">
-                <div className="w-full aspect-[3/4] border border-[#38BDF8]/15 bg-[#0B1526] rounded-xl flex flex-col items-center justify-center mb-6 text-[#8CA3C4] shadow-inner relative overflow-hidden">
-                  <span className="text-xs font-mono text-[#38BDF8]/70">[Photo Placeholder]</span>
-                  <span className="text-[10px] font-mono text-[#8CA3C4]/60 mt-1">Dr. P. Bhaskar</span>
-                </div>
-                <div>
-                  <span className="px-2.5 py-1 text-xs font-mono font-bold tracking-wider text-[#38BDF8] border border-[#38BDF8]/20 bg-[#38BDF8]/10 rounded-md inline-block mb-3">CIE Coordinator</span>
-                  <h3 className="text-xl font-bold mb-1 text-[#EAF2FF]">Dr. P. Bhaskar</h3>
-                  <p className="text-xs text-[#8CA3C4] font-mono">MLR Institute of Technology</p>
-                </div>
-              </article>
-
-              <article className="bg-[#050A14]/85 border border-[#2563EB]/15 rounded-2xl p-6 hover:border-[#38BDF8]/40 transition-all duration-300 hover:shadow-[0_10px_30px_rgba(56,189,248,0.08)] flex flex-col justify-between h-full">
-                <div className="w-full aspect-[3/4] border border-[#38BDF8]/15 bg-[#0B1526] rounded-xl flex flex-col items-center justify-center mb-6 text-[#8CA3C4] shadow-inner relative overflow-hidden">
-                  <span className="text-xs font-mono text-[#38BDF8]/70">[Photo Placeholder]</span>
-                  <span className="text-[10px] font-mono text-[#8CA3C4]/60 mt-1">Prof. S. Madhav</span>
-                </div>
-                <div>
-                  <span className="px-2.5 py-1 text-xs font-mono font-bold tracking-wider text-[#38BDF8] border border-[#38BDF8]/20 bg-[#38BDF8]/10 rounded-md inline-block mb-3">Incubation Lead</span>
-                  <h3 className="text-xl font-bold mb-1 text-[#EAF2FF]">Prof. S. Madhav</h3>
-                  <p className="text-xs text-[#8CA3C4] font-mono">MLR Institute of Technology</p>
-                </div>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        {/* Next Event / Incubation Support CTA */}
-        <section id="neste" className="bg-[#030712] py-24 border-b border-[#38BDF8]/10 relative overflow-hidden" aria-labelledby="next-event-heading">
-          <div className="absolute inset-0 opacity-5 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none"></div>
-          <div className="max-w-4xl mx-auto text-center px-4 relative z-10">
-            <span className="text-xs font-mono text-[#38BDF8] tracking-widest block mb-2 font-semibold">GET FUNDED</span>
-            <h2 id="next-event-heading" className="text-4xl font-extrabold text-[#EAF2FF] mb-4 tracking-tight uppercase bg-clip-text text-transparent bg-gradient-to-r from-[#EAF2FF] via-[#7DD3FC] to-[#38BDF8]">
-              READY TO ACCELERATE YOUR STARTUP?
-            </h2>
-            <p className="text-sm text-[#8CA3C4] mb-8 max-w-2xl mx-auto leading-relaxed">
-              Join EQUINOX 2025 at MLR Institute of Technology to turn your ideas into functional products, pitch to real investors, and secure incubation opportunities.
-            </p>
-            <article className="bg-[#0B132B]/85 border border-[#38BDF8]/20 p-8 rounded-2xl mb-8 shadow-2xl hover:border-[#38BDF8]/40 transition-colors">
-              <div className="flex items-center justify-center space-x-2 mb-4 font-mono text-[#38BDF8]">
-                <Calendar className="w-5 h-5" aria-hidden="true" />
-                <time dateTime="2025-10-24" className="text-lg font-bold">
-                  TBD 2025
-                </time>
-              </div>
-              <h3 className="text-2xl font-bold text-[#EAF2FF] mb-2 tracking-tight">INCUBATION REGISTRATION</h3>
-              <p className="text-sm text-[#8CA3C4] mb-6">
-                Venue: Centre for Innovation and Entrepreneurship, MLRIT Campus, Dundigal, Hyderabad.
-              </p>
-              <Button className="bg-gradient-to-r from-[#2563EB] to-[#38BDF8] hover:shadow-[0_0_25px_rgba(56,189,248,0.5)] text-white font-bold text-lg px-8 py-3 rounded-md transition-all duration-300 border-none transform active:scale-95 shadow-[0_0_20px_rgba(37,99,235,0.3)]">
-                Register for Incubation
-              </Button>
-            </article>
-          </div>
-        </section>
-
-        {/* Footer */}
-        <footer className="bg-[#0B1526] py-12 text-[#EAF2FF] border-t border-[#38BDF8]/10 font-mono text-sm" role="contentinfo">
-          <div className="max-w-6xl mx-auto px-4">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-              <div className="flex items-center space-x-2">
-                <span className="text-xl font-bold text-[#EAF2FF]">EQUINOX 2025</span>
-                <div
-                  className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[12px] border-b-[#38BDF8] rotate-90"
-                  aria-hidden="true"
-                ></div>
-                <span className="text-xs text-[#8CA3C4]">CIE, MLRIT</span>
-              </div>
-              <div className="text-[#8CA3C4] text-xs space-y-1">
-                <p>Centre for Innovation and Entrepreneurship (CIE)</p>
-                <p>MLR Institute of Technology, Dundigal, Hyderabad, 500043.</p>
-                <p className="pt-2">
-                  Email:{" "}
-                  <a href="mailto:cie@mlrinstitutions.ac.in" className="text-[#38BDF8] hover:underline">
-                    cie@mlrinstitutions.ac.in
-                  </a>
-                </p>
-              </div>
-            </div>
-          </div>
-        </footer>
-
-        {/* Image Modal */}
-        {selectedImage && (
-          <div
-            className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="modal-title"
-          >
-            <div className="relative max-w-4xl max-h-full">
-              <h2 id="modal-title" className="sr-only">
-                Fullscreen view
-              </h2>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute -top-12 right-0 text-white hover:bg-white/10"
-                onClick={() => setSelectedImage(null)}
-                aria-label="Close fullscreen modal"
-              >
-                <X className="w-6 h-6" />
-              </Button>
-              {selectedImage.startsWith("http") ? (
-                <img
-                  src={selectedImage || "/placeholder.svg"}
-                  alt="Full view"
-                  className="max-w-full max-h-full object-contain rounded-lg"
-                />
-              ) : (
-                <div className="bg-[#0B1526] border border-[#38BDF8]/40 p-12 rounded-xl text-center shadow-2xl flex flex-col justify-center items-center">
-                  <span className="text-[#38BDF8] font-mono text-lg mb-2">[Photo Placeholder]</span>
-                  <span className="text-xl text-[#EAF2FF]">{selectedImage}</span>
-                  <span className="text-[#8CA3C4] mt-4 max-w-sm text-sm">
-                    This is a placeholder for the actual event photograph. Real photos can be uploaded and swapped in later.
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-    </>
-  )
+    </div>
+  );
 }

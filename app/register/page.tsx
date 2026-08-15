@@ -89,7 +89,6 @@ export default function RegisterPage() {
             <Link
               key={item.slug}
               href={`/events/${item.slug}`}
-              transitionTypes={["nav-forward"]}
               className="flex items-center justify-between gap-4 rounded-2xl bg-surface p-6 transition hover:bg-surface-2"
             >
               <span>

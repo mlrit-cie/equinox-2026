@@ -1,6 +1,5 @@
 /* Shared page furniture. Everything here is used by two or more routes. */
 
-import { ViewTransition } from "react";
 import Link from "next/link";
 
 export function Arrow({ className = "" }: { className?: string }) {
@@ -161,20 +160,17 @@ export function EventCard({
   return (
     <Link
       href={`/events/${event.slug}`}
-      transitionTypes={["nav-forward"]}
       className="press group flex flex-col gap-4"
     >
       {/* The tile is the morph target: it grows into the event page's hero. */}
-      <ViewTransition name={`event-${event.slug}`} share="morph" default="none">
-        <div className="grain relative aspect-[4/3] overflow-hidden rounded-2xl bg-gradient-to-br from-surface-2 via-surface to-ground transition duration-200 group-hover:from-accent/45">
-          <span className="label absolute top-4 left-4 rounded-full border border-fg/15 bg-ground/50 px-3 py-1 backdrop-blur-md">
-            {event.category}
-          </span>
-          <span className="absolute right-4 bottom-4 grid h-10 w-10 place-items-center rounded-full bg-fg text-ground opacity-0 transition duration-200 group-hover:opacity-100">
-            <Arrow />
-          </span>
-        </div>
-      </ViewTransition>
+      <div className="grain relative aspect-[4/3] overflow-hidden rounded-2xl bg-gradient-to-br from-surface-2 via-surface to-ground transition duration-200 group-hover:from-accent/45">
+        <span className="label absolute top-4 left-4 rounded-full border border-fg/15 bg-ground/50 px-3 py-1 backdrop-blur-md">
+          {event.category}
+        </span>
+        <span className="absolute right-4 bottom-4 grid h-10 w-10 place-items-center rounded-full bg-fg text-ground opacity-0 transition duration-200 group-hover:opacity-100">
+          <Arrow />
+        </span>
+      </div>
       <div>
         <h3 className="heading text-xl">{event.name}</h3>
         <p className="text-fg/70">{event.tagline}</p>
@@ -187,16 +183,7 @@ export function EventCard({
 /* Wraps a route's content so forward/back navigations slide in the matching
    direction. Untyped navigations (back button, refresh) get no slide. */
 export function PageTransition({ children }: { children: React.ReactNode }) {
-  const directions = {
-    "nav-forward": "nav-forward",
-    "nav-back": "nav-back",
-    "nav-fade": "nav-fade",
-    default: "none",
-  };
-
   return (
-    <ViewTransition enter={directions} exit={directions} default="none">
-      <div>{children}</div>
-    </ViewTransition>
+    <div>{children}</div>
   );
 }

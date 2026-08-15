@@ -96,7 +96,6 @@ export function NavBar({
               <Link
                 key={item.name}
                 href={item.url}
-                transitionTypes={["nav-fade"]}
                 aria-current={isActive ? "page" : undefined}
                 onClick={() => setClicked({ path: pathname, name: item.name })}
                 className={cn(

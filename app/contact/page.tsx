@@ -67,7 +67,6 @@ export default function ContactPage() {
               />
               <Link
                 href={`/events/${item.slug}`}
-                transitionTypes={["nav-forward"]}
                 className="flex items-center gap-2 text-sm text-accent hover:text-fg"
               >
                 {item.name}
